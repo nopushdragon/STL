@@ -56,7 +56,7 @@ void save(const std::string& fname)
 
 //------------------------------------------------------------------------------------------
 // 한 학기 강의를 저장하기 위한 함수
-// 
+// 선언
 // 2026. 3. 9
 //------------------------------------------------------------------------------------------
 #pragma once
@@ -70,7 +70,7 @@ void save(const std::string&);
 
 //------------------------------------------------------------------------------------------
 // 한 학기 강의를 저장하기 위한 함수
-// 
+// 정의
 // 2026. 3. 9
 //------------------------------------------------------------------------------------------
 #include <iostream>
@@ -152,6 +152,164 @@ int main()
 	change(&a, &b);
 
 	std::cout << a << ", " << b << std::endl;	// 2, 1이라고 출력되어야 함
+
+	save("메인.cpp");
+}
+
+
+===============================================
+저장한 시간 -2026-03-10 15:53:01.7791796
+===============================================
+
+//==========================================================================================
+#include <iostream>
+#include "save.h"
+
+class Dog;	// forward declaration
+
+void change(int&, int&);
+void change(Dog&, Dog&);
+
+void change(int& a, int& b)
+{
+	int temp{ a };
+	a = b;	// a.operater = (b);
+	b = temp;
+}
+
+
+class Dog {
+private:
+	int num;
+
+	friend std::ostream& operator<<(std::ostream& os, const Dog& d) {
+		os << d.num;
+		return os;
+	}
+public:
+	Dog() = default;
+	explicit Dog(int n) : num{ n } {}
+
+	// ~Dog() {}    // 할 필요없다.
+
+  // 이 코드는 사용하지 말자
+  //operator int() {
+  //    return num;
+  //}
+};
+
+void change(Dog& a, Dog& b)
+{
+	Dog temp{ a };
+	a = b;		// operater
+	b = temp;
+}
+
+// 이름 붙은 데이터들의 모든 주소는 컴파일할 때 결정된다
+// free store를 사용하는 변수들은 런타임에 주소가 결정된다.
+// change 함수는 지금 같은 이름이지만 메모리적으로는 주소값이 다르다 어떻게?? << name mangling
+
+int main()
+{
+	// [문제] 의도대로 실행되게 하자
+	{
+		// using Dog = int	// #define Dog int 이건 사용하면 안된다.
+		// Dog는 class로 작성하자
+		
+		Dog a{ 1 }, b{ 2 };
+		change(a, b);
+		std::cout << a << ", " << b << std::endl;
+	}
+
+	{
+		int a{ 1 }, b{ 2 };
+		change(a, b);
+		std::cout << a << ", " << b << std::endl;
+	}
+
+	save("메인.cpp");
+}
+
+
+===============================================
+저장한 시간 -2026-03-10 16:54:21.3695600
+===============================================
+
+//==========================================================================================
+#include <iostream>
+#include "save.h"
+
+// 템플릿 - 동일한 내용의 코드를 자료형만 바꿔서 사용할거시야.
+
+// 템플릿 함수는 선언과 정의를 분리할 수 없다. <- 이유 다시 한 번 알아보면 좋을 느낌
+template<class T> //실전에서는 이런 식으로 T를 사용하지 않음, 문장형으로 지음.
+void change(T& a, T& b) 
+{
+	std::cout << "템플릿 함수가 호출됨" << std::endl;
+	T temp{ a };
+	a = b;
+	b = temp;
+}
+
+// double에 대한 specialization - 템플릿 특수화
+template<> 
+void change<double>(double& a, double& b)
+{
+	std::cout << "double에 대한 specialization이 호출됨" << std::endl;
+	double temp{ a };
+	a = b;
+	b = temp;
+}
+
+int main()
+{
+	double a, b;
+	change<double>(a, b);	// 뭘 호출해야 하나? - 호출우선순위 결정
+	//이런 식으로 <>으로 내가 해 줄 자료형을 명시적으로 해주면 좋음, 근데 안해도 알아서 해주긴 함.
+
+	std::string c{ "Hello" }, d{ "World" };
+	change(c,d);
+	
+	save("메인.cpp");
+}
+
+
+===============================================
+저장한 시간 -2026-03-10 17:12:47.8017602
+===============================================
+
+//==========================================================================================
+#include <iostream>
+#include "save.h"
+
+using namespace std;
+
+//template<class T>
+//T add(T a, T b)
+//{
+//	return a + b;
+//}
+// 위처럼 쓰면 교수님이 0점 주심. 왜? T가 복사 생성자를 필요로 하는 타입이 될 수 있기 때문. 그래서 const T&로 바꿔야 한다.	
+
+//template<>
+//string add<string>(const string& a, const string& b)
+//{
+//	return string(a + b);		// RVO (Return Value Optimization)로 인해 불필요한 복사 없이 문자열이 반환된다.
+//}
+
+template<class T>
+T add(const T& a, const T& b)
+{
+	return a + b;
+}
+
+int main()
+{
+	// [문제] 템플릿 함수 add를 한 개 만들어 실행되게 하라.
+	cout << add(1, 2) << endl;
+
+	cout << add("2026년 "s, "3월 10일"s) << endl;	// 이런 식으로 문자열 뒤에 s를 붙이면 string으로 변환된다.
+	//cout << add<string>(string{ "2026년" }, string{ "3월 10일" }) << endl;
 
 	save("메인.cpp");
 }
