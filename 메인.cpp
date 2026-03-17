@@ -1,61 +1,28 @@
 //==========================================================================================
+// 많은 수의 자료 다루기 - file i/o
+
 #include <iostream>
-#include <random>
-#include <print>
+#include <fstream>
 #include <algorithm>
-#include <array>
 #include "save.h"
 
 using namespace std;
 
-default_random_engine dre;
-uniform_int_distribution uid( 0,9999 );
-
-
-// 다음 시간 멤버 설명부터 다시
-template<class T, int N>
-class myArray {
-public:
-	size_t size() const {	// size_t 매우 큰 값까쥐 가능, const 읽기전용
-		return N;
-	}
-
-	int& operator[](int idx) {	// [] 연산자 오버로딩, idx는 배열의 인덱스
-		return arr[idx];
-	}
-
-	T* begin(){	// begin() 멤버 함수, 배열의 시작 주소 반환
-		return &arr[0];
-	}
-
-	T* end() {	// end() 멤버 함수, 배열의 끝 주소 반환
-		return &arr[N];
-	}
-
-private:
-	T arr[N];
-};
 
 int main()
 {
-
-
-	myArray<int,1000> arr;
-
-	for(int i =0; i<arr.size(); ++i) {
-		arr[i] = uid(dre);
-	}
+	// [문제] int로 표현할 수 있는 값은 -2147483648 ~ 2147483647 까지 이다.
+	// 모든 int 값을 하나도 빼지 않고 한 개씩 파일에 text로 기록하였다.
+	// 값과 값은 빈칸 한 개로 구분하였다.
+	// 이렇게 하면 int 를 한 개 기록하는데 평균 몇 byte가 필요한지 계산하라.
 	
-	//for(int& num: arr) {
-	//	num = uid(dre);
-	//}
-
-	for (int num : arr) {
-		print("{:<8}", num);
+	int cnt = 0;
+	for(int i = numeric_limits<int>::min(); i <= numeric_limits<int>::max(); i++)
+	{
+		cnt++;
 	}
-
-	auto p = minmax_element(arr.begin(), arr.end());
-	cout << endl << *(p.first) << " " << *(p.second) << endl;
-
+		
+	cout << cnt*4;
+	
 	//save("메인.cpp");
 }

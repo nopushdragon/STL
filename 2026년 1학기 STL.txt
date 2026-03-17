@@ -561,3 +561,74 @@ int main()
 
 	save("메인.cpp");
 }
+
+
+===============================================
+저장한 시간 -2026-03-17 16:10:21.2272369
+===============================================
+
+//==========================================================================================
+// 많은 수의 자료 다루기 - file i/o
+
+#include <iostream>
+#include <random>
+#include <fstream>
+#include "save.h"
+
+using namespace std;
+
+default_random_engine dre;
+uniform_int_distribution uid( numeric_limits<int>::min(), numeric_limits<int>::max());
+
+int main()
+{
+	// [문제] 랜덤 값을 갖는 int 천만 개를 다음과 같이 "int천만개.txt" 파일에 저장하였다.
+	
+	ofstream out{ "int천만개.txt" };
+
+	for (int i = 0; i < 10000000; ++i) {
+		out << uid(dre) << "\n"; // endl 보다 "\n"이 훨씬 더 빠르다. 
+	}
+
+	save("메인.cpp");
+}
+
+
+===============================================
+저장한 시간 -2026-03-17 17:13:08.0910869
+===============================================
+
+//==========================================================================================
+// 많은 수의 자료 다루기 - file i/o
+
+#include <iostream>
+#include <fstream>
+#include <algorithm>
+#include "save.h"
+
+using namespace std;
+
+
+int main()
+{
+	// [문제] "int천만개.txt" 파일에는 int 값 천만개가 저장되어있다.
+	// 천만개가 있따는 사실은 틀림없다 - 믿고 쓰자.
+	// 가장 작은 값을 찾아 출력하라.
+	
+	ifstream in("int천만개.txt");
+	if (not in) {
+		cout << "파일 있는거 맞음??" << endl;
+	}
+
+	// 이것은 0점짜리 답안
+	// //#include <array>
+	// (전역에서 선언)array<int, 10000000> a;	
+	//for (int& num : a) {
+	//	in >> num;
+	//}
+	//cout << "최소: " << *min_element(a.begin(), a.end()) << endl;
+
+	cout << "최소: " << *min_element(istream_iterator<int>(in), {}) << endl;	// 반복자, 순회	
+
+	save("메인.cpp");
+}
