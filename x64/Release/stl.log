@@ -1,8 +1,7 @@
 ﻿  메인.cpp
-C:\Users\min_yong\Desktop\stl\stl\메인.cpp(15,26): warning C4834: [[nodiscard]] 특성이 포함된 함수의 반환 값을 버리는 중입니다.
   코드를 생성하고 있습니다.
-  71 of 185 functions (38.4%) were compiled, the rest were copied from previous compilation.
-    2 functions were new in current compilation
-    10 functions had inline decision re-evaluated but remain unchanged
+  17 of 847 functions ( 2.0%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    8 functions had inline decision re-evaluated but remain unchanged
   코드를 생성했습니다.
   stl.vcxproj -> C:\Users\min_yong\Desktop\stl\x64\Release\stl.exe

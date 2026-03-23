@@ -3,26 +3,59 @@
 
 #include <iostream>
 #include <fstream>
+#include <filesystem>
+#include <array>
 #include <algorithm>
+#include <random>
+#include <print>
+#include <string>
 #include "save.h"
 
 using namespace std;
 
+default_random_engine dre;
+uniform_int_distribution uid(0, 9999);
+uniform_int_distribution uidNameLen(10, 30);
+uniform_int_distribution<int> uidChar('a', 'z');
+
+class Dog {
+private:
+	string name;	// [10,30] 10이상30이하 길이의 소문자로 구성된 이름  //※(10,30) 10초과30미만
+	size_t id;		// [0,9999]
+
+	friend ostream& operator<<(ostream& os, const Dog& dog) {
+		print(os, "[{:>4}] - {}", dog.id, dog.name);
+		return os;
+	}
+};
+
+// [문제] 파일 "Dog천마리"에는 class Dog 객체 1000개가 저장되어 있다.
+// 파일은 binary mode이고 각 객체는 메모리 크기 그대로 stream의 write 함수로 기록하였다.
+// 모든 객체를 한번의 write 함수로 기록하였다
+// Dog의 멤버는 위와 같다.
+// 메모리로 그대로 읽어 와라.
 
 int main()
 {
-	// [문제] int로 표현할 수 있는 값은 -2147483648 ~ 2147483647 까지 이다.
-	// 모든 int 값을 하나도 빼지 않고 한 개씩 파일에 text로 기록하였다.
-	// 값과 값은 빈칸 한 개로 구분하였다.
-	// 이렇게 하면 int 를 한 개 기록하는데 평균 몇 byte가 필요한지 계산하라.
-	
-	int cnt = 0;
-	for(int i = numeric_limits<int>::min(); i <= numeric_limits<int>::max(); i++)
-	{
-		cnt++;
+	ifstream in("Dog천마리", ios::binary);
+	if (!in) {
+		cout << "Dog 없음" << endl;
+		return 20240601;
 	}
-		
-	cout << cnt*4;
 	
+	array<Dog, 1000> dogs;
+	
+	in.read((char*)dogs.data(), dogs.size() * sizeof(Dog));
+	
+	for (const Dog& dog : dogs) {
+		cout << dog << endl;
+	}
+	
+	//array<Dog, 1000> dogs;
+	//for (Dog& dog : dogs) {
+	//	in >> dog;
+	//	cout << dog << endl;
+	//}
+
 	//save("메인.cpp");
 }
