@@ -1,39 +1,37 @@
 //==========================================================================================
+// 호출가능 타입 - callable types
+// 1. 함수
+//	- 함수 포인터도 가능
+// 2. lambda
+// 3. () 연산자를 구현한 클래스 - 객체를 functor (함수객체)라 함
+// 4. 멤버함수와 멤버함수 포인터 
+//
+// ----> function 클래스로 일관된 사용 가능
 
 #include <iostream>
-#include <algorithm>
-#include <random>
-#include <array>
-#include <print>
-#include <ranges>
 #include "save.h"
 
 using namespace std;
 
-default_random_engine dre;
-uniform_int_distribution uid{0, 999'9999};
-
-// [문제] 랜덤값을 갖는 int 1000만개를 메모리에 저장하라.
-// qsort 를 이용하여 오름차순 정렬하라.
-// 정렬 결과를 앞에서부터 1000개만 화면에 출력하라.
-
-array<int, 1000'0000> a;
-
-int 오름차순(const void* a, const void* b) {
-	return *(int*)a - *(int*)b;
-}
-
 int main()
 {
-	for (int& b : a) b = uid(dre);
+	[]() {
+		cout << "안녕 난 람다야 반가워!" << endl;
+		}();
 
-	// 시간 측정 시작
-	qsort(a.data(), a.size(), sizeof(array<int,1000'0000>::value_type), 오름차순);
-	// 측정 끝
+	// 람다 표현식은 아래와 같이 컴파일러가 내부적으로 클래스 형태로 변환하여 처리한다.
 
-	for (int& num:a | views::take(1000)) {
-		print("{:8}", num);
-	}
+	class HUNGRY {
+	public:
+		void operator()() {	// 함수 호출 연산자 오버로딩, 현재는 딱히 리턴값 없으니 void
+			cout << "안녕 난 람다야 반가워!" << endl;
+		};
+	};
+
+	HUNGRY a;
+	a();
+
+	cout << typeid(a).name() << endl;
 
 	//save("메인.cpp");
 
