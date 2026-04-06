@@ -632,3 +632,1160 @@ int main()
 
 	save("메인.cpp");
 }
+
+
+===============================================
+저장한 시간 -2026-03-23 13:28:55.1254021
+===============================================
+
+//==========================================================================================
+// 많은 수의 자료 다루기 - file i/o
+
+#include <iostream>
+#include <fstream>
+#include <algorithm>
+#include "save.h"
+
+using namespace std;
+
+
+int main()
+{
+	// [문제] int로 표현할 수 있는 값은 -2147483648 ~ 2147483647 까지 이다.
+	// 모든 int 값을 하나도 빼지 않고 한 개씩 파일에 text로 기록하였다.
+	// 값과 값은 빈칸 한 개로 구분하였다.
+	// 이렇게 하면 int 를 한 개 기록하는데 평균 몇 byte가 필요한지 계산하라.
+	
+	
+	save("메인.cpp");
+}
+
+
+===============================================
+저장한 시간 -2026-03-23 13:55:24.4193556
+===============================================
+
+//==========================================================================================
+// 많은 수의 자료 다루기 - file i/o
+
+#include <iostream>
+#include <fstream>
+#include <random>
+#include "save.h"
+
+using namespace std;
+
+default_random_engine dre;
+uniform_int_distribution uid;
+
+int main()
+{
+	// [문제] 랜덤 int값 1000'0000개를 파일에 저장하라.
+
+	ofstream out{ "intaaa천만개.txt",ios::binary };
+
+	// 114826203 - text mode
+	// 40000000 - 메모리 그대로 저장한다면 40MB
+
+	int num;
+	for (int i = 0; i < 10000000; i++)
+	{
+		//out << uid(dre) << "\n";
+		num = uid(dre);
+		out.write(reinterpret_cast<char*>(&num), sizeof(int));
+	}
+
+
+	save("메인.cpp");
+}
+
+
+===============================================
+저장한 시간 -2026-03-23 14:34:06.3194857
+===============================================
+
+//==========================================================================================
+// 많은 수의 자료 다루기 - file i/o
+
+#include <iostream>
+#include <fstream>
+#include <filesystem>
+#include <array>
+#include <algorithm>
+#include "save.h"
+
+using namespace std;
+
+// [문제] 파일 "intaaa천만개"에는 int값 천만개가 저장되어 있다.
+// 파일은 binary 모드로 열었고 int값은 stream의 write ㅎ마수를 사용하여 저장하였ㄷ
+// 저장된 int 값을 모두 메모리에 젖아하라
+// 저장된 값 중에서 가장 작은 값과 큰 값을 화면에 출력흐라ㅏ
+
+// contiguous memory - 공간상(물리상)으로 연속
+// contiguouse - 시간상으로 연속
+
+array<int, 10000000> arr;
+
+int main()
+{
+	ifstream in("intaaa천만개.txt", ios::binary);
+	if (!in) {
+		cout << "파일을 열 수 없습니다." << endl;
+		exit(20240609);
+	}
+
+	in.read((char*)(arr.data()),arr.size() * sizeof(int));
+	
+	auto [min, max] = minmax_element(arr.begin(), arr.end());
+
+	cout << "최소값: " << *min << endl;
+	cout << "최대값: " << *max << endl;
+
+	save("메인.cpp");
+}
+
+
+===============================================
+저장한 시간 -2026-03-23 14:56:22.7188606
+===============================================
+
+//==========================================================================================
+// 많은 수의 자료 다루기 - file i/o
+
+#include <iostream>
+#include <fstream>
+#include <filesystem>
+#include <array>
+#include <algorithm>
+#include <random>
+#include <print>
+#include <string>
+#include "save.h"
+
+using namespace std;
+
+default_random_engine dre;
+uniform_int_distribution uid(0, 9999);
+uniform_int_distribution uidNameLen(10, 30);
+uniform_int_distribution<int> uidChar('a', 'z');
+
+class Dog {
+public:
+	Dog(){
+		id = uid(dre);
+		int len = uidNameLen(dre);
+		for (int i = 0; i < len; ++i) {
+			name += uidChar(dre);
+		}
+	}
+private:
+	string name;	// [10,30] 10이상30이하 길이의 소문자로 구성된 이름  //※(10,30) 10초과30미만
+	size_t id;		// [0,9999]
+
+
+	friend ostream& operator<<(ostream& os, const Dog& dog) {
+		print(os, "[{:>4}] - {}", dog.id, dog.name);
+		return os;
+	}
+};
+
+
+int main()
+{
+	array<Dog, 1000> dogs;
+
+	ofstream out{ "Dog천마리", ios::binary };
+	out.write((char*)dogs.data(), dogs.size() * sizeof(dogs));
+
+
+
+	save("메인.cpp");
+}
+
+
+===============================================
+저장한 시간 -2026-03-24 17:15:25.4363554
+===============================================
+
+//==========================================================================================
+// 동적 메모리 할당(Dynamic memory allocation)
+// 
+// 정적(static): program 할 때 사용할 메모리를 결정 // compile-time	// 이름을 줄 수 있는 변수 ex) int num; stack, data, code 영역에 존재, code에는 함수
+// 동적(dynamic): 실행한 이후에 결정할 수 있는 메모리 // run-time // 주소로만 이루어진, 이름을 줄 수 없는 변수, free store에 존재
+
+
+// 다음시간 -> 스마트 포인터 -> 콜러블 타입 -> 실습 -> STL
+
+
+#include <iostream>
+#include <fstream>
+#include <filesystem>
+#include <array>
+#include <algorithm>
+#include <random>
+#include <print>
+#include <string>
+#include <numeric>
+#include <memory>
+#include "save.h"
+
+using namespace std;
+
+// [문제] 사용자가 입력한 수 만큼 int를 저장할 메모리를 확보하라.
+// 1부터 시자가는 정수로 메모리를 채워라.
+// 합계를 화면에 출력하라.
+
+int main()
+{
+	// int* p; -> 사용하지 말아야함
+	// c++11(modern c++)에 완벽한 대체 수단이 있음 -> smart_pointer
+
+	unique_ptr<int[]> p;	// unique_ptr은 배열도 지원함 -> unique_ptr<int[]> p; -> p[i]로 접근 가능
+	while (0) {
+		size_t input;
+		cout << "몇 개의 메모리를 원하니: ";
+		cin >> input;
+
+		// 설마 음수를 입력하시는 건 아니겠죠? ㅋㅋㅋ << 이거 코파일럿 자동 생성인데 말투 왜이럼
+
+		try {
+			//p = new int[input];
+			p.reset(new int[input]);	// unique_ptr은 reset() 함수를 통해 메모리를 할당할 수 있음
+		}
+		catch (exception& e) {
+			cout << "메모리 고갈됐어욧 - " << e.what() << endl;
+		}
+
+		//iota(p, p + input, 1);
+		//
+		//long long sum = accumulate(p, p + input, 0LL);	//accumulate(p, p + input, static_cast<long long>(0));
+		iota(p.get(), p.get() + input, 1);
+
+		long long sum = accumulate(p.get(), p.get() + input, 0LL);
+		cout << "합계: " << sum << endl;
+
+		//delete[] p; // unique_ptr은 delete를 자동으로 해줌 -> 메모리 누수 방지, 예외 안전성 제공
+	}
+
+	save("메인.cpp");
+}
+
+
+===============================================
+저장한 시간 -2026-03-30 13:53:48.5673588
+===============================================
+
+//==========================================================================================
+
+#include <iostream>
+#include <fstream>
+#include <filesystem>
+#include <array>
+#include <algorithm>
+#include <random>
+#include <print>
+#include <string>
+#include <numeric>
+#include <memory>
+#include "save.h"
+
+using namespace std;
+
+// c++언어의 보증사항 
+// 프로그램이 정상 종료시(return문, exit과는 다름) 스택에 만들어진 지역 객체를
+// 반드시 소멸됨을 보증한다.
+
+int main()
+{
+	int* p = new int;
+
+	cout << *p;
+
+	//return 0;		// leakage(누출), 고갈
+
+	save("메인.cpp");
+
+	delete p;	
+}
+
+
+===============================================
+저장한 시간 -2026-03-30 14:11:12.1689244
+===============================================
+
+//==========================================================================================
+
+#include <iostream>
+#include <memory>
+#include "save.h"
+
+using namespace std;
+
+// c++언어의 보증사항 
+// 프로그램이 정상 종료시(return문, exit과는 다름) 스택에 만들어진 지역 객체를
+// 반드시 소멸됨을 보증한다.
+// stack-unwinding : 프로그램이 정상 종료시 스택에 만들어진 지역 객체를 반드시 소멸됨을 보증한다.
+
+class Dog {
+public:
+	Dog() { cout << "생성" << endl; }
+	~Dog() { cout << "소멸" << endl; }
+};
+
+class 스마트포인터 {
+public:
+	스마트포인터(Dog* p) : p{ p } {}
+	~스마트포인터() {
+		delete p;
+	}
+private:
+	Dog* p;
+};
+
+int main()
+{
+	unique_ptr<Dog[]> p{new Dog[10]};
+
+	save("메인.cpp");
+
+}
+
+
+
+===============================================
+저장한 시간 -2026-03-30 14:50:39.1710703
+===============================================
+
+//==========================================================================================
+
+#include <iostream>
+#include <memory>
+#include <fstream>
+#include <algorithm>
+#include "save.h"
+
+using namespace std;
+
+// [문제] "메인.cpp"의 소문자를 모두 대문자로 바꾼 "메인대문자.cpp"를 만들어라.
+
+
+int main()
+{
+	ifstream in {"메인.cpp"};
+	if (not in) {
+		return 20260330;
+	}
+
+	ofstream out{ "메인대문자.cpp" };
+
+	// transform(메인.cpp, 메인대문자.cpp, 소문자를대문자로);
+	// transform(메인시작, 메인끝,메인대문자시작으로,함수의시작번지)
+	transform(istreambuf_iterator<char>{in}, {}, ostreambuf_iterator<char>{out}, 
+		[](char c){
+		return c = toupper(c);
+		});
+
+	save("메인.cpp");
+
+}
+
+
+===============================================
+저장한 시간 -2026-03-30 15:20:56.2820076
+===============================================
+
+//==========================================================================================
+
+#include <iostream>
+#include <algorithm>
+#include <random>
+#include <array>
+#include <print>
+#include <ranges>
+#include "save.h"
+
+using namespace std;
+
+default_random_engine dre;
+uniform_int_distribution uid{0, 999'9999};
+
+// [문제] 랜덤값을 갖는 int 1000만개를 메모리에 저장하라.
+// qsort 를 이용하여 오름차순 정렬하라.
+// 정렬 결과를 앞에서부터 1000개만 화면에 출력하라.
+
+array<int, 1000'0000> a;
+
+int 오름차순(const void* a, const void* b) {
+	return *(int*)a - *(int*)b;
+}
+
+int main()
+{
+	for (int& b : a) b = uid(dre);
+
+	// 시간 측정 시작
+	qsort(a.data(), a.size(), sizeof(array<int,1000'0000>::value_type), 오름차순);
+	// 측정 끝
+
+	for (int& num:a | views::take(1000)) {
+		print("{:8}", num);
+	}
+
+	save("메인.cpp");
+
+}
+
+
+===============================================
+저장한 시간 -2026-03-31 15:45:26.5578746
+===============================================
+
+//==========================================================================================
+
+#include <iostream>
+#include <algorithm>
+#include <random>
+#include <array>
+#include <chrono>
+#include "save.h"
+
+using namespace std;
+
+default_random_engine dre;
+uniform_int_distribution uid{0, 999'9999};
+
+// [문제] 랜덤값을 갖는 int 1000만개를 메모리에 저장하라.
+// qsort 를 이용하여 오름차순 정렬하라.
+// 정렬 결과를 앞에서부터 1000개만 화면에 출력하라.
+
+array<int, 1000'0000> a;
+
+int 오름차순(const void* a, const void* b) {
+	return *(int*)a - *(int*)b;
+}
+
+int main()
+{
+	for (int& b : a) b = uid(dre);
+
+	// 시간 측정 시작
+	auto start = chrono::high_resolution_clock::now();
+	qsort(a.data(), a.size(), sizeof(int), 오름차순);
+	auto stop = chrono::high_resolution_clock::now();
+	// 측정 끝
+
+	auto duration = chrono::duration_cast<chrono::milliseconds>(stop - start);
+
+	cout << duration << endl;
+
+
+	save("메인.cpp");
+
+}
+
+
+===============================================
+저장한 시간 -2026-03-31 16:42:38.7834545
+===============================================
+
+//==========================================================================================
+
+#include <iostream>
+#include <algorithm>
+#include <random>
+#include <array>
+#include <chrono>
+#include <algorithm>
+#include "save.h"
+
+using namespace std;
+
+default_random_engine dre;
+uniform_int_distribution uid{0, 999'9999};
+
+array<int, 1000'0000> a;
+
+int 오름차순(const void* a, const void* b) 
+{
+	return *(int*)a - *(int*)b;
+}
+
+bool sort용오름차순(int a, int b) 
+{
+	return a < b;
+}
+
+int main()
+{
+
+	// qsort를 타고 들어가보면 이름 앞에 __cdecl 라는 것이 있는데 이건 인자 불러오는 방향? 순서?다
+	// x86에서는 스택이 오른쪽에서 왼쪽으로 쌓이기 때문에 오른쪽에서 왼쪽으로 인자를 불러온다 (이 문장은 코파일럿 피셜)
+	// 그 반대는 __pascal 이다
+
+	{
+		for (int& b : a) b = uid(dre);
+
+		auto start = chrono::high_resolution_clock::now();
+		qsort(a.data(), a.size(), sizeof(int), 오름차순);
+		auto stop = chrono::high_resolution_clock::now();
+
+		auto duration = chrono::duration_cast<chrono::milliseconds>(stop - start);
+
+		cout << "qsort 시간 - " << duration << endl;
+	}
+
+	{
+		for (int& b : a) b = uid(dre);
+
+		auto start = chrono::high_resolution_clock::now();
+		//sort(a.begin(), a.end(), sort용오름차순);	// sort는 qsort와 달리 자료형을 자기가 정확하게 알아낸다.
+		sort(a.begin(), a.end(), [](int a, int b) {return a < b; });	// 함수를 인자로 불러오는 건 그리 빠르지 않았다. 람다를 쓰니 확실히 빨라진다.
+		// sort용오름차순을 쓰는 경우엔 함수의 주소 포인터를 받기 때문에 매번 그 위치로 가야함
+		// 람다를 이용하면 함수의 주소 포인터를 받는 것이 아니라, 컴파일러가 알아서 최적화해서 인라인으로 처리하기 때문에 빠르다.
+		// 위 주석에서 설명하듯이 이렇게 코드 자체를 안에 집어넣는 것을 in-line이라고 한다.
+		auto stop = chrono::high_resolution_clock::now();
+
+		auto duration = chrono::duration_cast<chrono::milliseconds>(stop - start);
+
+		cout << "sort 시간 - " << duration << endl;
+	}
+
+	save("메인.cpp");
+
+}
+
+
+===============================================
+저장한 시간 -2026-03-31 16:51:28.4406221
+===============================================
+
+//==========================================================================================
+
+#include <iostream>
+#include "save.h"
+
+using namespace std;
+
+void f()
+{
+	cout << "저는! 호출가능! 해요!" << endl;
+}
+
+int main()
+{
+	int n;	// addressof, sizeof, typeid
+
+	cout << addressof(f) << endl;
+	cout << typeid(f).name() << endl;
+
+	save("메인.cpp");
+
+}
+
+
+===============================================
+저장한 시간 -2026-03-31 16:56:11.0583926
+===============================================
+
+//==========================================================================================
+// 호출가능 타입 - callable types
+// 
+
+#include <iostream>
+#include "save.h"
+
+using namespace std;
+
+void f()
+{
+	cout << "저는! 호출가능! 해요!" << endl;
+}
+
+int main()
+{
+	void (*a)() = f;	// a는 함수 f를 가리키는 포인터
+
+	a();	// a를 통해 f를 호출
+
+
+	save("메인.cpp");
+
+}
+
+
+===============================================
+저장한 시간 -2026-03-31 16:59:37.1023563
+===============================================
+
+//==========================================================================================
+// 호출가능 타입 - callable types
+// 
+
+#include <iostream>
+#include "save.h"
+
+using namespace std;
+
+void 점프()
+{
+	cout << "점프!" << endl;
+}
+
+void 슬라이드()
+{
+	cout << "슬라이드!" << endl;
+}
+
+int main()
+{
+	void(*왼쪽키)() = 점프;
+	
+	왼쪽키();
+	왼쪽키();
+	// 설정에서 키를 변경했음
+	왼쪽키 = 슬라이드;
+	왼쪽키();
+
+	save("메인.cpp");
+
+}
+
+
+===============================================
+저장한 시간 -2026-03-31 17:03:58.1009331
+===============================================
+
+//==========================================================================================
+// 호출가능 타입 - callable types
+// 
+
+#include <iostream>
+#include "save.h"
+
+using namespace std;
+
+void 점프()
+{
+	cout << "점프!" << endl;
+}
+
+void 슬라이드()
+{
+	cout << "슬라이드!" << endl;
+}
+
+int main()
+{
+	점프();	// 이거는 야매야
+	(*점프)();	// 이게 진짜야
+
+	save("메인.cpp");
+
+}
+
+
+===============================================
+저장한 시간 -2026-03-31 17:11:07.7982901
+===============================================
+
+//==========================================================================================
+// 호출가능 타입 - callable types
+// 
+
+#include <iostream>
+#include "save.h"
+
+using namespace std;
+
+int main()
+{
+	[]() {
+		cout << "안녕 난 람다야 반가워!" << endl;
+		}();
+
+	cout << typeid(
+		[]() {
+		cout << "안녕 난 람다야 반가워!" << endl;
+		}).name();
+
+	save("메인.cpp");
+
+}
+
+
+===============================================
+저장한 시간 -2026-03-31 17:15:06.0076511
+===============================================
+
+//==========================================================================================
+// 호출가능 타입 - callable types
+// 
+
+#include <iostream>
+#include "save.h"
+
+using namespace std;
+
+int main()
+{
+	[]() {
+		cout << "안녕 난 람다야 반가워!" << endl;
+		}();
+
+	// 람다 표현식은 아래와 같이 컴파일러가 내부적으로 클래스 형태로 변환하여 처리한다.
+	class HUNGRY {
+	public:
+		void operator()() {	// 함수 호출 연산자 오버로딩, 현재는 딱히 리턴값 없으니 void
+			cout << "안녕 난 람다야 반가워!" << endl;
+		};
+	};
+
+	HUNGRY a;
+	a();
+
+	cout << typeid(a).name() << endl;
+
+	save("메인.cpp");
+
+}
+
+
+===============================================
+저장한 시간 -2026-03-31 17:19:45.1035413
+===============================================
+
+//==========================================================================================
+// 호출가능 타입 - callable types
+// 1. 함수
+//	- 함수 포인터도 가능
+// 2. lambda
+// 3. () 연산자를 구현한 클래스 - 객체를 functor (함수객체)라 함
+// 4. 멤버함수와 멤버함수 포인터 
+//
+// ----> function 클래스로 일관된 사용 가능
+
+#include <iostream>
+#include "save.h"
+
+using namespace std;
+
+int main()
+{
+	[]() {
+		cout << "안녕 난 람다야 반가워!" << endl;
+		}();
+
+	// 람다 표현식은 아래와 같이 컴파일러가 내부적으로 클래스 형태로 변환하여 처리한다.
+
+	class HUNGRY {
+	public:
+		void operator()() {	// 함수 호출 연산자 오버로딩, 현재는 딱히 리턴값 없으니 void
+			cout << "안녕 난 람다야 반가워!" << endl;
+		};
+	};
+
+	HUNGRY a;
+	a();
+
+	cout << typeid(a).name() << endl;
+
+	save("메인.cpp");
+
+}
+
+
+===============================================
+저장한 시간 -2026-04-06 14:04:44.0828581
+===============================================
+
+//==========================================================================================
+//호출가능 타입
+// function을 사용하여 함수를 호출할 수 있다.
+
+
+#include <iostream>
+#include <array>
+#include <algorithm>
+#include <functional>
+#include "save.h"
+
+using namespace std;
+
+bool 정렬기준(int a, int b)
+{
+	cout << "함수" << endl;	// 10 * (3~4) = 30~40회 정도. sort()는 O(nlogn)이므로 10개 정도면 30~40회 정도 호출됨.
+	return a < b;	// 내림차순
+}
+
+class Dog {
+public:
+	bool operator()(int a, int b) {
+		cout << "도그" << " ";
+		return a < b;
+	}
+};
+
+int main()
+{
+	
+	array<int, 10> a{6,8,3,4,5,7,9,3,2,4 };
+
+	function<bool(int, int)> f;
+
+	f = 정렬기준;
+	f = [](int a, int b) -> bool {
+		cout << "람다" << endl;
+		return a < b;	// 내림차순
+		};
+	f = Dog{};
+
+
+
+
+	//sort(a.begin(), a.end(), 정렬기준);	// 기본 오름차순
+	//sort(a.begin(), a.end(), Dog{});
+	//sort(a.begin(), a.end(), [](int a, int b) -> bool {
+	//	cout << "람다" << endl;
+	//	return a < b;	// 내림차순
+	//	});
+	sort(a.begin(), a.end(), f);
+
+	for(int a : a)
+		cout << a << " ";
+
+	save("메인.cpp");
+
+}
+
+
+===============================================
+저장한 시간 -2026-04-06 14:53:35.1166665
+===============================================
+
+//==========================================================================================
+//호출가능 타입
+// function을 사용하여 함수를 호출할 수 있다.
+
+
+#include <iostream>
+#include <array>
+#include <algorithm>
+#include <functional>
+#include <random>
+#include <print>
+#include <ranges>
+#include "save.h"
+
+using namespace std;
+
+default_random_engine dre;
+uniform_int_distribution uid(0, 999'9999);
+uniform_int_distribution uidNameLen(1, 150);
+uniform_int_distribution<int> uidChar('!', '~');
+
+
+class Dog {
+public:
+	Dog() {
+		id = uid(dre);
+		int len = uidNameLen(dre);
+		for (int i = 0; i < len; ++i) {
+			name += (char)uidChar(dre);
+		}
+	}
+	
+	//bool operator()(Dog a, Dog b) {
+	//	return a.id < b.id;
+	//}
+
+	int getId() const{
+		return id;
+	}
+
+private:
+	string name;	// [1,150]
+	int id;			// [0,999'9999]
+
+	friend ostream& operator<<(ostream& os, const Dog& dog) {
+		print(os,"[{:7}] - {}", dog.id, dog.name);
+		return os;
+	}
+};
+
+// [문제] Dog객체 10만개를 메모리에 저장하라.
+// std::sort를 사용하여 id 기준 오름차순으로 정렬하라
+// 필요하다면 Dog에 interface 멤버를 추가하라.
+// 앞에서부터 1000개의 내용을 출력하라.
+
+array<Dog, 10'0000> dogs;
+
+int main()
+{
+	//sort(dogs.begin(), dogs.end(), Dog());
+
+	sort(dogs.begin(), dogs.end(), [](const Dog& a, const Dog& b){
+		return a.getId() < b.getId();
+		});
+
+	for (const Dog& dog : dogs | views::take(1000)) {
+		cout << dog << endl;
+	}
+
+	save("메인.cpp");
+
+}
+
+
+===============================================
+저장한 시간 -2026-04-06 14:57:57.3272957
+===============================================
+
+//==========================================================================================
+//호출가능 타입
+// function을 사용하여 함수를 호출할 수 있다.
+
+
+#include <iostream>
+#include <array>
+#include <algorithm>
+#include <functional>
+#include <random>
+#include <print>
+#include <ranges>
+#include "save.h"
+
+using namespace std;
+
+default_random_engine dre;
+uniform_int_distribution uid(0, 999'9999);
+uniform_int_distribution uidNameLen(1, 150);
+uniform_int_distribution<int> uidChar('!', '~');
+
+
+class Dog {
+public:
+	Dog() {
+		id = uid(dre);
+		int len = uidNameLen(dre);
+		for (int i = 0; i < len; ++i) {
+			name += (char)uidChar(dre);
+		}
+	}
+	
+	//bool operator()(Dog a, Dog b) {
+	//	return a.id < b.id;
+	//}
+
+	int getId() const{
+		return id;
+	}
+
+private:
+	string name;	// [1,150]
+	int id;			// [0,999'9999]
+
+	friend ostream& operator<<(ostream& os, const Dog& dog) {
+		print(os,"[{:7}] - {}", dog.id, dog.name);
+		return os;
+	}
+};
+
+// [문제] Dog객체 10만개를 메모리에 저장하라.
+// std::sort를 사용하여 id 기준 오름차순으로 정렬하라
+// 필요하다면 Dog에 interface 멤버를 추가하라.
+// 앞에서부터 1000개의 내용을 출력하라.
+
+array<Dog, 10'0000> dogs;
+
+int main()
+{
+	//sort(dogs.begin(), dogs.end(), Dog());
+
+	//sort(dogs.begin(), dogs.end(), [](const Dog& a, const Dog& b){
+	//	return a.getId() < b.getId();
+	//	});
+
+	// c++20의 sort
+	ranges::sort(dogs, {}, &Dog::getId );
+
+	for (const Dog& dog : dogs | views::take(1000)) {
+		cout << dog << endl;
+	}
+
+	save("메인.cpp");
+
+}
+
+
+===============================================
+저장한 시간 -2026-04-06 15:05:59.8475986
+===============================================
+
+//==========================================================================================
+//호출가능 타입
+// function을 사용하여 함수를 호출할 수 있다.
+
+
+#include <iostream>
+#include <array>
+#include <algorithm>
+#include <functional>
+#include <random>
+#include <print>
+#include <ranges>
+#include "save.h"
+
+using namespace std;
+
+default_random_engine dre;
+uniform_int_distribution uid(0, 999'9999);
+uniform_int_distribution uidNameLen(1, 150);
+uniform_int_distribution<int> uidChar('!', '~');
+
+
+class Dog {
+public:
+	Dog() {
+		id = uid(dre);
+		int len = uidNameLen(dre);
+		for (int i = 0; i < len; ++i) {
+			name += (char)uidChar(dre);
+		}
+	}
+
+	int getId() const{
+		return id;
+	}
+
+	string getName() const {
+		return name;
+	}
+
+private:
+	string name;	// [1,150]
+	int id;			// [0,999'9999]
+
+	friend ostream& operator<<(ostream& os, const Dog& dog) {
+		print(os,"[{:7}] - {}", dog.id, dog.name);
+		return os;
+	}
+};
+
+// [문제] Dog객체 10만개를 메모리에 저장하라.
+// std::sort를 사용하여 name의 길이 기준 오름차순으로 정렬하라
+// 필요하다면 Dog에 interface 멤버를 추가하라.
+// 앞에서부터 1000개의 내용을 출력하라.
+
+array<Dog, 10'0000> dogs;
+
+int main()
+{
+
+	// c++20의 sort
+	//ranges::sort(dogs, {}, &Dog::getId );
+	 
+	
+	sort(dogs.begin(), dogs.end(), [](const Dog& a, const Dog& b){
+		return a.getName().length() < b.getName().length();
+		});
+
+
+	for (const Dog& dog : dogs | views::take(1000)) {
+		cout << dog << endl;
+	}
+
+	save("메인.cpp");
+
+}
+
+
+===============================================
+저장한 시간 -2026-04-06 15:15:45.5644928
+===============================================
+
+//==========================================================================================
+//호출가능 타입
+// function을 사용하여 함수를 호출할 수 있다.
+
+
+#include <iostream>
+#include <array>
+#include <algorithm>
+#include <functional>
+#include <random>
+#include <print>
+#include <ranges>
+#include "save.h"
+
+using namespace std;
+
+default_random_engine dre;
+uniform_int_distribution uid(0, 999'9999);
+uniform_int_distribution uidNameLen(1, 150);
+uniform_int_distribution<int> uidChar('!', '~');
+
+
+class Dog {
+public:
+	Dog() {
+		id = uid(dre);
+		int len = uidNameLen(dre);
+		for (int i = 0; i < len; ++i) {
+			name += (char)uidChar(dre);
+		}
+	}
+
+	int getId() const{
+		return id;
+	}
+
+	string getName() const {
+		return name;
+	}
+
+	string& getName() {
+		return name;
+	}
+
+private:
+	string name;	// [1,150]
+	int id;			// [0,999'9999]
+
+	friend ostream& operator<<(ostream& os, const Dog& dog) {
+		print(os,"[{:7}] - {}", dog.id, dog.name);
+		return os;
+	}
+};
+
+// [문제] Dog객체 10만개를 메모리에 저장하라.
+// 각 Dog 객체의 이름을 오름차순으로 정렬하라.
+// 필요하다면 Dog에 interface 멤버를 추가하라.
+// 앞에서부터 1000개의 내용을 출력하라.
+
+array<Dog, 10'0000> dogs;
+
+int main()
+{
+
+	// c++20의 sort
+	//ranges::sort(dogs, {}, &Dog::getId );
+
+	for (Dog& dog : dogs) {
+		string& name = dog.getName();
+		sort(name.begin(), name.end());
+	}
+
+	 
+	
+	//sort(dogs.begin(), dogs.end(), [](const Dog& a, const Dog& b){
+	//	return a.getName() < b.getName();
+	//	});
+
+
+	for (const Dog& dog : dogs | views::take(1000)) {
+		cout << dog << endl;
+	}
+
+	save("메인.cpp");
+
+}
