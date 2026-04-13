@@ -3,47 +3,34 @@
 
 #include <iostream>
 #include <array>
+#include <algorithm>
 #include <fstream>
 #include "save.h"
+#include "ZString.h"
 
 using namespace std;
 
-class ZString {
-public:
-	ZString() {
-		cout << "생성() 글자수: " << len << " 객체주소: " << this << " 글자주소: " << (void*)p.get() << endl;
-	};
-
-	ZString(const char* s) {
-		len = strlen(s);
-		p = make_unique<char[]>(len);
-		memcpy(p.get(), s, len);
-
-		cout << "생성(char*) 글자수: " << len << " 객체주소: " << this << " 글자주소: " << (void*)p.get() << endl;
-	}
-
-	friend ostream& operator<<(ostream& os, const ZString& zs) {
-		for (int i = 0; i < zs.len; ++i) {
-			os << *(zs.p.get() + i);	// os << zs.p[i]; 
-		}
-		return os;
-	}
-
-private:
-	size_t len{};
-	unique_ptr<char[]> p{};
-};
+extern bool 관찰;	// 관찰하려면 true
 
 int main()
 {
-	// 이 동작 다시 설명하고 ZString으로 바꾸면 안되는 이유부터 시작
-	string s{ "2026년" };
-	string t = move(s);
+	// [문제] "메인.cpp"에 있는 모든 단어를 ZString으로 읽어와라.
+	// 단어란 공백을 분리된 문자집합을 말한다.
+	// 다음 문장이 문제없이 실행되도록 하자.
 
-	cout << "s - " << s << endl;
-	cout << "t - " << t << endl;
+	ifstream in{ "메인.cpp" };
+	if (!in) {
+		cout << "파일 없음" << endl;
+		return 20260413;
+	}
+
+	ZString s;
+	while (in >> s) {
+		cout << s << endl;
+	}
 
 
 	//save("메인.cpp");
 
 }
+
