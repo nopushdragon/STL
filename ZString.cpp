@@ -65,7 +65,8 @@ ZString& ZString::operator=(const ZString& other)
 }
 
 // 이동생성과 이동할당연산자
-ZString::ZString(ZString&& other)
+// 2026.04.20 move에서 예외를 던지지 않는다.
+ZString::ZString(ZString&& other) noexcept
 	:id{++gid}
 {
 	len = other.len;
@@ -78,7 +79,7 @@ ZString::ZString(ZString&& other)
 		special("이동생성");
 }
 
-ZString& ZString::operator=(ZString&& other)
+ZString& ZString::operator=(ZString&& other) noexcept
 {
 	if(this == &other)
 		return *this;
@@ -99,6 +100,12 @@ size_t ZString::getLen() const
 	return len;
 }
 
+// STL 컨테이너가 되려면 다음 함수정도는 제공해야 - 2026.04.20
+size_t ZString::size() const
+{
+	return len;
+}
+
 void ZString::special(std::string 동작) const
 {
 	// 글자수가 10개 이상이라도 10개까지만 출력
@@ -111,6 +118,11 @@ void ZString::special(std::string 동작) const
 
 	std::println("[{:7}] {:8} - 객체:{:#014X}, 글자:{:#014X}, 개수:{:<6} 내용:{}",
 		id, 동작, (long long)this, (long long)p.get(), len, 글자);
+}
+
+void ZString::show() const			// 2026.04.20
+{
+	special("show");
 }
 
 std::ostream& operator<<(std::ostream& os, const ZString& zs) 

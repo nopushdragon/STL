@@ -1,12 +1,17 @@
 //==========================================================================================
-// STL 컨테이너 - std::String 과 유사한 ZString을 만ㄷ르어서 컨테이너 본질에 접근
+// STL 컨테이너 - Containers are objects that store other objects.
+// Sequenece Container
+// - array<T,N> - 유일하게 컴파일 타임에 size 결정 - STACK, DATA 
+// - vector<T> - dynamic (size) array - free-store에 data 관리 
+
+
 
 #include <iostream>
-#include <array>
 #include <algorithm>
-#include <fstream>
+#include <numeric>
+#include <vector>
+#include <string>
 #include "save.h"
-#include "ZString.h"
 
 using namespace std;
 
@@ -14,23 +19,12 @@ extern bool 관찰;	// 관찰하려면 true
 
 int main()
 {
-	// [문제] "메인.cpp"에 있는 모든 단어를 ZString으로 읽어와라.
-	// 단어란 공백을 분리된 문자집합을 말한다.
-	// 다음 문장이 문제없이 실행되도록 하자.
+	// [문제] 키보드에서 입력한 모든 정수의 합계를 저장하라.
 
-	ifstream in{ "메인.cpp" };
-	if (!in) {
-		cout << "파일 없음" << endl;
-		return 20260413;
-	}
+	// long long sum = accumulate(istream_iterator<int>{cin}, {}, 0LL);
+	cout << accumulate(istream_iterator<int>{cin}, {}, 0LL) << endl;
 
-	ZString s;
-	while (in >> s) {
-		cout << s << endl;
-	}
-
-
-	//save("메인.cpp");
+	save("메인.cpp");
 
 }
 
