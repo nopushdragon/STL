@@ -1672,7 +1672,8 @@ private:
 };
 
 // [문제] Dog객체 10만개를 메모리에 저장하라.
-// std::sort를 사용하여 name의 길이 기준 오름차순으로 정렬하라
+// std::
+를 사용하여 name의 길이 기준 오름차순으로 정렬하라
 // 필요하다면 Dog에 interface 멤버를 추가하라.
 // 앞에서부터 1000개의 내용을 출력하라.
 
@@ -2001,3 +2002,400 @@ int main()
 	save("메인.cpp");
 
 }
+
+
+===============================================
+저장한 시간 -2026-04-13 14:14:24.6810095
+===============================================
+
+//==========================================================================================
+// STL 컨테이너 - std::String 과 유사한 ZString을 만ㄷ르어서 컨테이너 본질에 접근
+
+#include <iostream>
+#include "save.h"
+#include "ZString.h"
+
+using namespace std;
+
+extern bool 관찰;
+
+
+int main()
+{
+	관찰 = true;
+
+	ZString zs[5]{ "333", "1" , "55555" , "4444" , "22" };
+
+
+	save("메인.cpp");
+
+}
+
+
+===============================================
+저장한 시간 -2026-04-13 15:10:51.0056198
+===============================================
+
+//==========================================================================================
+// STL 컨테이너 - std::String 과 유사한 ZString을 만ㄷ르어서 컨테이너 본질에 접근
+
+#include <iostream>
+#include <array>
+#include <algorithm>
+#include "save.h"
+#include "ZString.h"
+
+using namespace std;
+
+extern bool 관찰;
+
+int main()
+{
+	array<ZString,5> zs { "333", "1" , "55555" , "4444" , "22" };
+
+	// [문제] zs를 길이 오름차순으로 정렬하라. - c++11 이전 code
+	관찰 = true;
+	std::sort(zs.begin(), zs.end(), [](const ZString& a, const ZString& b) {
+		return a.getLen() < b.getLen(); 
+		});
+	관찰 = false;
+
+	for(const ZString& z: zs)
+		cout << z << endl;
+
+	save("메인.cpp");
+
+}
+
+
+/*
+[      6] 복사생성 - 객체:0X00942B12F920, 글자:0X02928C963420, 개수:1      내용:1
+[      2] 복사할당 - 객체:0X00942B12FAA8, 글자:0X02928C963300, 개수:3      내용:333
+[      1] 복사할당 - 객체:0X00942B12FA90, 글자:0X02928C9633F0, 개수:1      내용:1
+[      6] 소멸     - 객체:0X00942B12F920, 글자:0X02928C963420, 개수:1      내용:1
+[      7] 복사생성 - 객체:0X00942B12F920, 글자:0X02928C963400, 개수:5      내용:55555
+[      3] 복사할당 - 객체:0X00942B12FAC0, 글자:0X02928C9633B0, 개수:5      내용:55555
+[      7] 소멸     - 객체:0X00942B12F920, 글자:0X02928C963400, 개수:5      내용:55555
+[      8] 복사생성 - 객체:0X00942B12F920, 글자:0X02928C9632F0, 개수:4      내용:4444
+[      4] 복사할당 - 객체:0X00942B12FAD8, 글자:0X02928C963310, 개수:5      내용:55555
+[      3] 복사할당 - 객체:0X00942B12FAC0, 글자:0X02928C963450, 개수:4      내용:4444
+[      8] 소멸     - 객체:0X00942B12F920, 글자:0X02928C9632F0, 개수:4      내용:4444
+[      9] 복사생성 - 객체:0X00942B12F920, 글자:0X02928C963390, 개수:2      내용:22
+[      5] 복사할당 - 객체:0X00942B12FAF0, 글자:0X02928C963370, 개수:5      내용:55555
+[      4] 복사할당 - 객체:0X00942B12FAD8, 글자:0X02928C963310, 개수:4      내용:4444
+[      3] 복사할당 - 객체:0X00942B12FAC0, 글자:0X02928C9633D0, 개수:3      내용:333
+[      2] 복사할당 - 객체:0X00942B12FAA8, 글자:0X02928C963460, 개수:2      내용:22
+[      9] 소멸     - 객체:0X00942B12F920, 글자:0X02928C963390, 개수:2      내용:22
+1
+22
+333
+4444
+55555
+
+C:\Users\min_yong\Desktop\stl\x64\Release\stl.exe(프로세스 15412)이(가) 0 코드(0x0)와 함께 종료되었습니다.
+*/
+
+===============================================
+저장한 시간 -2026-04-13 15:20:04.2527744
+===============================================
+
+//==========================================================================================
+// STL 컨테이너 - std::String 과 유사한 ZString을 만ㄷ르어서 컨테이너 본질에 접근
+
+#include <iostream>
+#include <array>
+#include <algorithm>
+#include <fstream>
+#include "save.h"
+#include "ZString.h"
+
+using namespace std;
+
+extern bool 관찰;	// 관찰하려면 true
+
+int main()
+{
+	// [문제] "메인.cpp"에 있는 모든 단어를 ZString으로 읽어와라.
+	// 단어란 공백을 분리된 문자집합을 말한다.
+	// 다음 문장이 문제없이 실행되도록 하자.
+
+	ifstream in{ "메인.cpp" };
+	if (!in) {
+		cout << "파일 없음" << endl;
+		return 20260413;
+	}
+
+	ZString s;
+	while (in >> s) {
+		cout << s << endl;
+	}
+
+
+	save("메인.cpp");
+
+}
+
+
+
+===============================================
+저장한 시간 -2026-04-20 13:52:20.9970932
+===============================================
+
+//==========================================================================================
+// STL 컨테이너 - Containers are objects that store other objects.
+
+#include <iostream>
+#include <array>
+#include <algorithm>
+#include <fstream>
+#include "save.h"
+#include "ZString.h"
+
+using namespace std;
+
+extern bool 관찰;	// 관찰하려면 true
+
+int main()
+{
+	array<ZString, 5 > a{ "1", "22", "333", "4444", "55555" };
+	
+	//array<ZString,5>::iterator i = a.begin();
+	auto i = a.begin();
+
+
+	// 범위를 i != a.end()로 하는이유: 만약 자료형을 list로 했다면
+	// 내부적으론 contiguous하지 않기 때문에 앞 주소값이 뒷 주소값보다 더 큰 경우도 존재하기 때문에 
+	// < 연산자로 비교할 수 없다. 그래서 i != a.end()로 범위를 정하는 것이다.
+	for (auto i = a.begin(); i != a.end(); ++i)
+		cout << (*i) << endl;
+
+
+
+	// iterator로 a를 순회
+	// element access - at, operator[], front, back, data
+
+
+	save("메인.cpp");
+
+}
+
+
+
+===============================================
+저장한 시간 -2026-04-20 13:57:02.2958645
+===============================================
+
+//==========================================================================================
+// STL 컨테이너 - Containers are objects that store other objects.
+
+#include <iostream>
+#include <array>
+#include <algorithm>
+#include <fstream>
+#include "save.h"
+#include "ZString.h"
+
+using namespace std;
+
+extern bool 관찰;	// 관찰하려면 true
+
+int main()
+{
+	array<ZString, 5 > a{ "1", "22", "333", "4444", "55555" };
+
+	// element access - at, operator[], front, back, data
+	관찰 = true;
+	a[0].show();
+	a[a.size() - 1].show();
+
+	a.front().show();
+	a.back().show();
+
+	a.begin()->show();
+	(a.end() - 1)->show();
+
+	a.data()->show();
+	(a.data() + a.size() - 1)->show();
+	관찰 = false;
+
+	save("메인.cpp");
+
+}
+
+
+
+===============================================
+저장한 시간 -2026-04-20 14:18:14.3065078
+===============================================
+
+//==========================================================================================
+// STL 컨테이너 - Containers are objects that store other objects.
+
+
+
+
+#include <iostream>
+#include <array>
+#include <algorithm>
+#include <fstream>
+#include "save.h"
+#include "ZString.h"
+#include <vector>
+
+using namespace std;
+
+extern bool 관찰;	// 관찰하려면 true
+
+int main()
+{
+	array<ZString, 5 > a{ "1", "22", "333", "4444", "55555" };
+
+	// at() - 경계를 검사하고 싶 다면 이 함수를 사용하면 된다.
+	// c++은 속도를 최우선으로 하는 언어이다.
+	// 시간 걸리는 at()을 다른 함수로 제공하는 이유이다.
+	// at()은 예외를 던진다.
+	//while (true) {
+	//	cout << "찾을 원소는? ";
+	//	int num;
+	//	cin >> num;
+	//	
+	//	try {
+	//		cout << a.at(num) << endl;
+	//	}
+	//	catch (exception& e) {
+	//		cout << e.what() << endl;		// 표준예외를 출력한다. 
+	//	}
+	//}
+
+	
+
+
+	save("메인.cpp");
+
+}
+
+
+===============================================
+저장한 시간 -2026-04-20 14:59:50.4184738
+===============================================
+
+//==========================================================================================
+// STL 컨테이너 - Containers are objects that store other objects.
+// Sequenece Container
+// - array<T,N> - 유일하게 컴파일 타임에 size 결정 - STACK, DATA 
+// - vector<T> - dynamic (size) array - free-store에 data 관리 
+
+
+
+#include <iostream>
+#include <array>
+#include <algorithm>
+#include <fstream>
+#include "save.h"
+#include "ZString.h"
+#include <vector>
+
+using namespace std;
+
+extern bool 관찰;	// 관찰하려면 true
+
+int main()
+{
+	vector<int> v{ 1,2,3,4,5 };
+
+	cout << "v의 크기 - " << sizeof(v) << endl;
+	cout << "v의 주소 - " << addressof(v) << endl;
+	cout << "v의 타입 - " << typeid(v).name() << endl;
+	cout << "v가 저장할 수 있는 최대 int 개수 - " << v.max_size() << endl;
+
+	// x86 - 12
+	// x64 - 24
+	// x64 - Debug - 32
+	cout << "v가 차지한 메모리 - " << sizeof(v) << endl;
+
+	save("메인.cpp");
+
+}
+
+
+
+===============================================
+저장한 시간 -2026-04-20 15:14:52.4457183
+===============================================
+
+//==========================================================================================
+// STL 컨테이너 - Containers are objects that store other objects.
+// Sequenece Container
+// - array<T,N> - 유일하게 컴파일 타임에 size 결정 - STACK, DATA 
+// - vector<T> - dynamic (size) array - free-store에 data 관리 
+
+
+
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <string>
+#include "save.h"
+
+using namespace std;
+
+extern bool 관찰;	// 관찰하려면 true
+
+int main()
+{
+	// [문제] 키보드에서 입력한 모든 단어를 저장하라.
+	// 입력의 끝은 OS 마다 따로 지정되어 있다. (ctrl + z)
+	// 오름차순으로 정렬하라.
+	// 출력하라.
+
+	vector<string> v{ istream_iterator<string>{cin}, {} };
+
+
+	// 오름차순(ascending order) 정렬
+	sort(v.begin(), v.end());
+
+
+	for (auto i = v.rbegin(); i != v.rend(); ++i)
+		cout << *i << endl;
+
+
+	save("메인.cpp");
+
+}
+
+
+
+===============================================
+저장한 시간 -2026-04-20 15:19:37.9984854
+===============================================
+
+//==========================================================================================
+// STL 컨테이너 - Containers are objects that store other objects.
+// Sequenece Container
+// - array<T,N> - 유일하게 컴파일 타임에 size 결정 - STACK, DATA 
+// - vector<T> - dynamic (size) array - free-store에 data 관리 
+
+
+
+#include <iostream>
+#include <algorithm>
+#include <numeric>
+#include <vector>
+#include <string>
+#include "save.h"
+
+using namespace std;
+
+extern bool 관찰;	// 관찰하려면 true
+
+int main()
+{
+	// [문제] 키보드에서 입력한 모든 정수의 합계를 저장하라.
+
+	// long long sum = accumulate(istream_iterator<int>{cin}, {}, 0LL);
+	cout << accumulate(istream_iterator<int>{cin}, {}, 0LL) << endl;
+
+	save("메인.cpp");
+
+}
+
