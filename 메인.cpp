@@ -4,27 +4,31 @@
 // - array<T,N> - 유일하게 컴파일 타임에 size 결정 - STACK, DATA 
 // - vector<T> - dynamic (size) array - free-store에 data 관리 
 
-
-
 #include <iostream>
-#include <algorithm>
-#include <numeric>
 #include <vector>
-#include <string>
+#include <algorithm>
+#include "ZString.h"
 #include "save.h"
 
 using namespace std;
 
 extern bool 관찰;	// 관찰하려면 true
 
+
 int main()
 {
-	// [문제] 키보드에서 입력한 모든 정수의 합계를 저장하라.
+	vector<int> v{ 1,2,3,4,5 };
 
-	// long long sum = accumulate(istream_iterator<int>{cin}, {}, 0LL);
-	cout << accumulate(istream_iterator<int>{cin}, {}, 0LL) << endl;
+	// [문제] v에서 3을 제거하라. v.size() == 4, 원소{ 1, 2, 4, 5}, v.capacity() == 5
 
-	save("메인.cpp");
+	
+	remove(v.begin(), v.end(), 3);
+	for(const auto& c : v)
+		cout << c << ' ';
+	// 1 2 4 5 5
+	// remove는 제거된 원소를 뒤로 보내고, 제거된 원소의 개수만큼 뒤에서부터 원소가 중복되어 보인다.
 
+
+	//save("메인.cpp");
 }
 

@@ -2399,3 +2399,184 @@ int main()
 
 }
 
+
+
+===============================================
+저장한 시간 -2026-04-27 14:18:49.3608221
+===============================================
+
+//==========================================================================================
+// STL 컨테이너 - Containers are objects that store other objects.
+// Sequenece Container
+// - array<T,N> - 유일하게 컴파일 타임에 size 결정 - STACK, DATA 
+// - vector<T> - dynamic (size) array - free-store에 data 관리 
+
+#include <iostream>
+#include <algorithm>
+#include <numeric>
+#include <vector>
+#include <string>
+#include "ZString.h"
+#include "save.h"
+
+using namespace std;
+
+extern bool 관찰;	// 관찰하려면 true
+
+int main()
+{
+	
+	vector<ZString> v{ "1","22", "333" };
+
+	v.reserve(10);
+
+	관찰 = true;
+	v.emplace_back("4444");
+	v.emplace_back("55555");
+	관찰 = false;
+
+	cout << endl;
+	cout << "v의 원소에 접근" << endl;
+
+	for (const ZString& zs : v)
+		cout << zs << endl;
+
+	save("메인.cpp");
+
+}
+
+
+
+===============================================
+저장한 시간 -2026-04-27 14:40:28.7906961
+===============================================
+
+//==========================================================================================
+// STL 컨테이너 - Containers are objects that store other objects.
+// Sequenece Container
+// - array<T,N> - 유일하게 컴파일 타임에 size 결정 - STACK, DATA 
+// - vector<T> - dynamic (size) array - free-store에 data 관리 
+
+#include <iostream>
+#include <algorithm>
+#include <numeric>
+#include <vector>
+#include <string>
+#include "ZString.h"
+#include "save.h"
+
+using namespace std;
+
+extern bool 관찰;	// 관찰하려면 true
+
+int main()
+{
+	save("메인.cpp");
+	
+	vector<ZString> v{ "1","22", "333" };
+
+	while (1) {
+		try {
+			v.push_back("1");
+		}
+		catch(exception& e) {
+			cerr << "예외발생: " << e.what() << endl;
+			cout << "현재 원소 개수 - " << v.size() << endl;
+			cout << "현재 용량 - " << v.capacity() << endl;
+			break;
+		}
+	}
+
+
+}
+
+
+
+===============================================
+저장한 시간 -2026-04-27 14:59:29.3394037
+===============================================
+
+//==========================================================================================
+// STL 컨테이너 - Containers are objects that store other objects.
+// Sequenece Container
+// - array<T,N> - 유일하게 컴파일 타임에 size 결정 - STACK, DATA 
+// - vector<T> - dynamic (size) array - free-store에 data 관리 
+
+#include <iostream>
+#include <vector>
+#include <array>
+#include <fstream>
+#include "ZString.h"
+#include "save.h"
+
+using namespace std;
+
+extern bool 관찰;	// 관찰하려면 true
+
+
+int main()
+{
+	// [문제] "메인.cpp"에 알파벳 소문자가 몇 개나 있는지 다음과 같이 출력하라.
+	// a - 10
+	// b - 5
+	//...
+	// z - 1
+	array<int, 26> alpha{};
+	
+	ifstream in("메인.cpp");
+
+	char c;
+	while (in >> c) {
+		if (islower(c)) {
+			alpha[c - 'a']++;
+		}
+	}
+
+	for (int i = 0; i < alpha.size(); ++i) {
+		cout << static_cast<char>('a' + i) << " - " << alpha[i] << endl;
+	}
+
+
+	save("메인.cpp");
+}
+
+
+
+===============================================
+저장한 시간 -2026-04-27 15:12:38.5175335
+===============================================
+
+//==========================================================================================
+// STL 컨테이너 - Containers are objects that store other objects.
+// Sequenece Container
+// - array<T,N> - 유일하게 컴파일 타임에 size 결정 - STACK, DATA 
+// - vector<T> - dynamic (size) array - free-store에 data 관리 
+
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include "ZString.h"
+#include "save.h"
+
+using namespace std;
+
+extern bool 관찰;	// 관찰하려면 true
+
+
+int main()
+{
+	vector<int> v{ 1,2,3,4,5 };
+
+	// [문제] v에서 3을 제거하라. v.size() == 4, 원소{ 1, 2, 4, 5}, v.capacity() == 5
+
+	
+	remove(v.begin(), v.end(), 3);
+	for(const auto& c : v)
+		cout << c << ' ';
+	// 1 2 4 5 5
+	// remove는 제거된 원소를 뒤로 보내고, 제거된 원소의 개수만큼 뒤에서부터 원소가 중복되어 보인다.
+
+
+	save("메인.cpp");
+}
+
