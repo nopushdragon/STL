@@ -24,6 +24,9 @@ public:
 
 
 	// 연산자 오버로딩
+	// 2026. 4. 28
+	bool operator==(const ZString& rhs) const;
+	
 	// 인터페이스 - 나중에 삭제 예정
 	size_t getLen() const;
 
