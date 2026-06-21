@@ -96,6 +96,7 @@ ZString& ZString::operator=(ZString&& other) noexcept
 	return *this;
 }
 
+// 연산자 오버로딩
 // 2026. 4. 28
 bool ZString::operator==(const ZString& rhs) const
 {
@@ -115,6 +116,37 @@ bool ZString::operator==(const ZString& rhs) const
 	
 }
 
+// 2026. 6. 1
+// set의 기본정렬 연산자 <
+// 사전식 정렬되도록 코딩
+bool ZString::operator<(const ZString& rhs) const
+{
+	return std::lexicographical_compare(begin(), end(), rhs.begin(), rhs.end());
+}
+
+// 2026. 5. 12 -  반복자 인터페이스
+// 2026. 5. 19 - begin이 되돌려줘야 할 타입은 class여야 한다.
+ZString_Iterator ZString::begin() const
+{
+	return p.get();
+}
+
+ZString_Iterator ZString::end() const
+{
+	return p.get() + len;
+}
+
+// 2026. 5. 18 - 역방향 추가
+ZString_Reverse_Iterator ZString::rbegin() const
+{
+	return p.get() + len;
+}
+
+ZString_Reverse_Iterator ZString::rend() const
+{
+	return p.get();
+}
+
 size_t ZString::getLen() const
 {
 	return len;
@@ -124,6 +156,11 @@ size_t ZString::getLen() const
 size_t ZString::size() const
 {
 	return len;
+}
+
+char* ZString::data() const
+{
+	return p.get();
 }
 
 void ZString::special(std::string 동작) const

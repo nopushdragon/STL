@@ -2843,3 +2843,2252 @@ int main() {
     // 단어를 오름차순으로 정렬하라 (sort 활용)
 }
 
+
+
+===============================================
+저장한 시간 -2026-05-11 13:50:48.8481946
+===============================================
+
+//==========================================================================================
+// STL 컨테이너 - Containers are objects that store other objects
+// Sequence containers - vector, list, deque
+// - array<T,N> 정적 배열, 컴파일 타임에 size 결정 - STACK, DATA 영역
+// - vector<T> - 동적 배열, cache hit가 높아 처리 속도가 가장 빠름
+// - list<T> - 이중 연결 리스트, 임의 위치 삽입/삭제 O(1)
+//
+//==========================================================================================
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <list>
+#include <chrono>
+#include <algorithm>
+#include "save.h"
+#include "ZString.h"
+
+using namespace std;
+
+extern bool 관찰;
+
+int main() {
+
+    fstream in{"2026년 1학기 STL.txt"};
+
+    if (not in) {
+		cout << "파일 열기 실패" << endl;
+		return 20260511;
+    }
+
+    cout << "데이터 읽는 중";
+    list<ZString> words{ istream_iterator<ZString>{in}, {} };
+    //vector<ZString> words{ istream_iterator<ZString>{in}, {} };
+    cout << endl;
+
+    cout << "정렬하는 중";
+	auto b = chrono::high_resolution_clock::now();
+    //sort(words.begin(), words.end(),[](const ZString& a, const ZString& b) {
+	//	return lexicographical_compare(a.data(), a.data() + a.size(), b.data(), b.data() + b.size());
+    //    });
+    words.sort([](const ZString& a, const ZString& b) {
+        return lexicographical_compare(a.data(), a.data() + a.size(), b.data(), b.data() + b.size());
+        });
+    auto e = chrono::high_resolution_clock::now();
+    cout << endl;
+
+    for(const ZString& s : words)
+		cout << s << endl;
+    cout << "걸린 시간 - " << chrono::duration_cast<chrono::microseconds>(e - b) << endl;
+
+	cout << "단어의 수 - " << words.size() << endl;
+
+    save("메인.cpp");
+}
+
+
+
+===============================================
+저장한 시간 -2026-05-11 14:41:48.4851647
+===============================================
+
+//==========================================================================================
+// STL 컨테이너 - Containers are objects that store other objects
+// Sequence containers - vector, list, deque
+// - array<T,N> 정적 배열, 컴파일 타임에 size 결정 - STACK, DATA 영역
+// - vector<T> - 동적 배열, cache hit가 높아 처리 속도가 가장 빠름
+// - list<T> - 이중 연결 리스트, 임의 위치 삽입/삭제 O(1)
+//
+//==========================================================================================
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <list>
+#include <chrono>
+#include <algorithm>
+#include <ranges>
+#include "save.h"
+#include "ZString.h"
+
+using namespace std;
+
+extern bool 관찰;
+
+int main() {
+    save("메인.cpp");
+
+    fstream in{"2026년 1학기 STL.txt"};
+    if (not in) {
+		cout << "파일 열기 실패" << endl;
+		return 20260511;
+    }
+
+    //list<ZString> words{ istream_iterator<ZString>{in}, {} };
+    vector<ZString> words{ istream_iterator<ZString>{in}, {} };
+
+    //words.sort([](const ZString& a, const ZString& b) {
+    //    return lexicographical_compare(a.data(), a.data() + a.size(), b.data(), b.data() + b.size());
+    //    });
+    sort(words.begin(), words.end(), [](const ZString& a, const ZString& b) {
+        return lexicographical_compare(a.data(), a.data() + a.size(), b.data(), b.data() + b.size());
+        });
+
+
+    // 정렬한 이후라면 중복된 단어를 제거
+    // default operator == 으로 판정
+    //words.unique();
+	auto newEnd = unique(words.begin(), words.end());
+    words.erase(newEnd, words.end());
+
+    for (const ZString& s : words 
+        | views::take(5) )
+        cout << s << endl;
+
+	cout << "------------------------------" << endl;
+
+    for (const ZString& s : words
+        | views::reverse
+        | views::take(5))
+        cout << s << endl;
+
+	cout << "중복 제거한 이후 단어의 수 - " << words.size() << endl;
+
+    // [문제] 사용자가 입력한 단어가 리스트에 있는지 찾아라.
+    // 없으면 없다고 출력하라.
+    // 있다면 리스트의 몇 번째 단어인지 출력하라.
+
+    while (true) {
+		cout << "찾을 단어를 입력하세요: ";
+        ZString word;
+        cin >> word;
+
+        auto pos = find(words.begin(), words.end(), word);
+
+        if (pos == words.end())
+            cout << word << "- 단어 없음" << endl;
+        else
+			cout << "단어가 있음. 위치: " << distance(words.begin(), pos) + 1 << endl;
+    }
+
+}
+
+
+
+===============================================
+저장한 시간 -2026-05-11 14:46:19.7391471
+===============================================
+
+//==========================================================================================
+// STL 컨테이너 - Containers are objects that store other objects
+// Sequence containers - vector, list, deque
+// - array<T,N> 정적 배열, 컴파일 타임에 size 결정 - STACK, DATA 영역
+// - vector<T> - 동적 배열, cache hit가 높아 처리 속도가 가장 빠름
+// - list<T> - 이중 연결 리스트, 임의 위치 삽입/삭제 O(1)
+//
+//==========================================================================================
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <list>
+#include <chrono>
+#include <algorithm>
+#include <ranges>
+#include "save.h"
+#include "ZString.h"
+
+using namespace std;
+
+extern bool 관찰;
+
+int main() {
+
+    fstream in{"2026년 1학기 STL.txt"};
+    if (not in) {
+		cout << "파일 열기 실패" << endl;
+		return 20260511;
+    }
+
+    //list<ZString> words{ istream_iterator<ZString>{in}, {} };
+    vector<ZString> words{ istream_iterator<ZString>{in}, {} };
+
+    //words.sort([](const ZString& a, const ZString& b) {
+    //    return lexicographical_compare(a.data(), a.data() + a.size(), b.data(), b.data() + b.size());
+    //    });
+    sort(words.begin(), words.end(), [](const ZString& a, const ZString& b) {
+        return lexicographical_compare(a.data(), a.data() + a.size(), b.data(), b.data() + b.size());
+        });
+
+
+    // 정렬한 이후라면 중복된 단어를 제거
+    // default operator == 으로 판정
+    //words.unique();
+	auto newEnd = unique(words.begin(), words.end());
+    words.erase(newEnd, words.end());
+
+    for (const ZString& s : words 
+        | views::take(5) )
+        cout << s << endl;
+
+	cout << "------------------------------" << endl;
+
+    for (const ZString& s : words
+        | views::reverse
+        | views::take(5))
+        cout << s << endl;
+
+	cout << "중복 제거한 이후 단어의 수 - " << words.size() << endl;
+
+    // [문제] 길이가 10인 단어만 화면에 출력하라.
+    copy_if(words.begin(),words.end(), ostream_iterator<ZString>( cout, "\n"),
+        [](const ZString& s) {
+            return s.size() == 10;
+		});
+
+    save("메인.cpp");
+}
+
+
+
+
+===============================================
+저장한 시간 -2026-05-11 15:20:19.7795673
+===============================================
+
+//==========================================================================================
+// STL 컨테이너 - Containers are objects that store other objects
+// Sequence containers - vector, list, deque
+// - array<T,N> 정적 배열, 컴파일 타임에 size 결정 - STACK, DATA 영역
+// - vector<T> - 동적 배열, cache hit가 높아 처리 속도가 가장 빠름
+// - list<T> - 이중 연결 리스트, 임의 위치 삽입/삭제 O(1)
+// - deque<T> - vector와 list의 장점을 갖는 컨테이너
+//==========================================================================================
+#include <iostream>
+#include <deque>
+#include <vector>
+#include <list>
+#include "save.h"
+#include "ZString.h"
+
+using namespace std;
+
+extern bool 관찰;
+
+
+class Test {
+	char c[1024 * 1024];      // 1MB
+};
+
+int main() 
+{
+    save("메인.cpp");
+
+    {
+        //벡터 -
+        vector<Test> v;
+        size_t cnt = 0;
+
+        while (true) {
+            try {
+                v.emplace_back();
+            }
+            catch (...) {        // ... 타원들(ellipses) - 모든 예외를 잡는다.
+                cout << endl;
+                cout << "벡터 - " << v.size() << endl;
+                break;
+            }
+
+            if (not(++cnt % 1000))
+                cout << ".";
+        }
+    }
+
+    {
+        //
+        deque<Test> v;
+        size_t cnt = 0;
+
+        while (true) {
+            try {
+                v.emplace_back();
+            }
+            catch (...) {
+                cout << endl;
+                cout << "뎈 - " << v.size() << endl;
+                break;
+            }
+
+            if (not(++cnt % 1000))
+                cout << ".";
+        }
+    }
+
+    {
+        //
+        list<Test> v;
+        size_t cnt = 0;
+
+        while (true) {
+            try {
+                v.emplace_back();
+            }
+            catch (...) {
+                cout << endl;
+                cout << "리스트 - " << v.size() << endl;
+                break;
+            }
+
+            if (not(++cnt % 1000))
+                cout << ".";
+        }
+    }
+
+
+}
+
+S
+
+===============================================
+저장한 시간 -2026-05-12 16:06:25.8921825
+===============================================
+
+//==========================================================================================
+// STL 컨테이너 - Containers are objects that store other objects
+// Sequence containers
+// - array<T,N> 정적 배열, 컴파일 타임에 size 결정 - STACK, DATA 영역
+// - vector<T> - 동적 배열, cache hit가 높아 처리 속도가 가장 빠름
+// - list<T> - 이중 연결 리스트, 임의 위치 삽입/삭제 O(1)
+// - deque<T> - vector와 list의 장점을 갖는 컨테이너
+// - forward_list<T> - 네가 아무리 잘 코딩해도 나보다 효율적인 코드는 못 만들어. 
+//                     It is intended that forward_list have zero space or
+//                     time overhead relative to a hand-written C-style singly
+//  			       linked list.
+//==========================================================================================
+#include <iostream>
+#include "save.h"
+#include "ZString.h"
+
+using namespace std;
+
+extern bool 관찰;
+
+int main() 
+{
+    save("메인.cpp");
+
+}
+
+
+
+===============================================
+저장한 시간 -2026-05-12 17:10:36.6813472
+===============================================
+
+//==========================================================================================
+// STL 컨테이너 - Containers are objects that store other objects
+// function pointer, lambda, function object, std::function 등의 collable-types를 대표하는 것은 function<T>
+// T[n], array<T,n>, vector<T>, string 등의 contiguous memory 를 대표하는 건 span<T> 라고 하고 이건 light-wight object(가벼운 객체, 경량 객체)라고 함.
+// string은 특별해서 string_view라는 가벼운 객체가 따로 존재함.
+//==========================================================================================
+#include <iostream>
+#include <algorithm>
+#include <ranges>
+#include <span>
+#include "save.h"
+#include "ZString.h"
+
+using namespace std;
+
+extern bool 관찰;
+
+int main() 
+{
+    ZString zs{ "The quick brown fox jumps over the lazy dog" };
+
+    sort(zs.data(), zs.data() + zs.size());
+
+	span<char>s{ zs.data(), zs.size() };
+
+    // [문제] 거꾸로 출력하세요.
+    for (char c : s | views::reverse) {
+        cout << c;
+	}
+
+    save("메인.cpp");
+}
+
+
+
+===============================================
+저장한 시간 -2026-05-12 17:20:18.0596491
+===============================================
+
+//==========================================================================================
+// STL 컨테이너 - Containers are objects that store other objects
+// function pointer, lambda, function object, std::function 등의 collable-types를 대표하는 것은 function<T>
+// T[n], array<T,n>, vector<T>, string 등의 contiguous memory 를 대표하는 건 span<T> 라고 하고 이건 light-wight object(가벼운 객체, 경량 객체)라고 함.
+// string은 특별해서 string_view라는 가벼운 객체가 따로 존재함.
+//==========================================================================================
+#include <iostream>
+#include <algorithm>
+#include <ranges>
+#include <span>
+#include "save.h"
+#include "ZString.h"
+
+using namespace std;
+
+extern bool 관찰;
+
+int main() 
+{
+    ZString zs{ "The quick brown fox jumps over the lazy dog" };
+
+    for (char c : zs ) {
+        cout << c << endl;
+	}
+
+    save("메인.cpp");
+}
+
+
+
+===============================================
+저장한 시간 -2026-05-18 14:15:07.5695814
+===============================================
+
+//==========================================================================================
+// STL 컨테이너 반복자 - Iterators are a generalization of pointers that allow 
+//                       a C++ program to work with different data structures in a uniform manner 
+//==========================================================================================
+#include <iostream>
+#include <vector>
+#include "save.h"
+#include "ZString.h"
+
+using namespace std;
+
+extern bool 관찰;
+
+// 반복자란 무엇인가?
+// 이걸 사용하는 이유는?
+// 반복자의 종류를 구분한 이유
+// ZString이 표준 반복자를 제공하려면?
+
+int main() 
+{
+    // 반복자를 만들어 기능을 이해해 본다.
+    //ostream_iterator<char> p{cout, "@@@@@\n"};
+    vector<char> v;
+    v.reserve(10);
+    auto p = v.begin();
+
+	// *p = 'A';, p ='A'; 차이 없음
+    *p = 'A';
+    ++p;
+    *p = 'B';
+    ++p;
+    *p = 'C';
+
+    for (int i = 0; i < 10; ++i) {
+        cout << v[i] << endl;
+	}
+
+    save("메인.cpp");
+}
+
+
+
+===============================================
+저장한 시간 -2026-05-18 14:40:53.7260880
+===============================================
+
+//==========================================================================================
+// STL 컨테이너 반복자 - Iterators are a generalization of pointers that allow 
+//                       a C++ program to work with different data structures in a uniform manner 
+//==========================================================================================
+#include <iostream>
+#include <vector>
+#include "save.h"
+#include "ZString.h"
+
+using namespace std;
+
+extern bool 관찰;
+
+// 반복자란 무엇인가?
+// 이걸 사용하는 이유는?
+// 반복자의 종류를 구분한 이유
+// ZString이 표준 반복자를 제공하려면?
+
+template<class 반복자>
+void f(반복자 iter)
+{
+	if (typeid(iter) == typeid(ostream_iterator<int, char, struct std::char_traits<char> >))
+		cout << "출력반복자가 전달되었다." << endl;
+	else
+		cout << "뿡" << endl;
+}
+
+
+int main() 
+{
+	//반복자의 종류를 구분하기
+	
+	f(ostream_iterator<int>{cout});
+
+	save("메인.cpp");
+}
+
+
+
+===============================================
+저장한 시간 -2026-05-18 14:54:02.2718130
+===============================================
+
+//==========================================================================================
+// STL 컨테이너 반복자 - Iterators are a generalization of pointers that allow 
+//                       a C++ program to work with different data structures in a uniform manner 
+//==========================================================================================
+#include <iostream>
+#include <forward_list>
+#include <list>
+#include <deque>
+#include <array>
+#include <vector>
+#include "save.h"
+#include "ZString.h"
+
+using namespace std;
+
+extern bool 관찰;
+
+// 반복자란 무엇인가?
+// 이걸 사용하는 이유는?
+// 반복자의 종류를 구분한 이유
+// ZString이 표준 반복자를 제공하려면?
+
+template<class 반복자>
+void f(반복자 iter)
+{
+	// 클래스 타입으로부터 여분(iterator traits)의 정보를 알 수 있다.
+	// iterator_category, value_type, difference_type, pointer, reference
+	cout << typeid(반복자::iterator_category).name() << endl;
+}
+
+
+int main() 
+{
+	//반복자의 종류를 구분하기
+	f(ostream_iterator<ZString>{clog});
+	
+	// 여기서부터는 hierarchy
+	f(istream_iterator<int>{cin});
+	f(forward_list<char>::const_iterator{});
+	f(list<float>{}.cbegin());
+	
+	// 여기서부터는 random_access 가능한 반복자
+	f(deque<ZString>::reverse_iterator{});
+
+	// 여기서부터는 contiguous 반복자
+	f(array<ZString, 0>::const_reverse_iterator{});
+	f(vector<ZString>::iterator{});
+
+	save("메인.cpp");
+}
+
+
+
+===============================================
+저장한 시간 -2026-05-18 15:01:54.4676588
+===============================================
+
+//==========================================================================================
+// STL 컨테이너 반복자 - Iterators are a generalization of pointers that allow 
+//                       a C++ program to work with different data structures in a uniform manner 
+//==========================================================================================
+#include <iostream>
+#include <forward_list>
+#include <list>
+#include <deque>
+#include <array>
+#include <vector>
+#include "save.h"
+#include "ZString.h"
+
+using namespace std;
+
+extern bool 관찰;
+
+// 반복자란 무엇인가?
+// 이걸 사용하는 이유는?
+// 반복자의 종류를 구분한 이유
+// ZString이 표준 반복자를 제공하려면?
+
+template<class 반복자>
+void f(반복자 iter)
+{
+	cout << typeid(iterator_traits<반복자>::iterator_category).name() << endl;
+}
+
+
+int main() 
+{
+	//반복자의 종류를 구분하기
+	char* p;
+	f(p);
+	save("메인.cpp");
+}
+
+
+
+===============================================
+저장한 시간 -2026-05-18 15:20:50.2567941
+===============================================
+
+//==========================================================================================
+// STL 컨테이너 반복자 - Iterators are a generalization of pointers that allow 
+//                       a C++ program to work with different data structures in a uniform manner 
+//==========================================================================================
+#include <iostream>
+#include <algorithm>
+#include <ranges>
+#include "save.h"
+#include "ZString.h"
+
+using namespace std;
+
+extern bool 관찰;
+
+int main() 
+{
+	save("메인.cpp");
+	ZString zs("Sphinx of black quartz judge my vow");
+
+	sort(zs.begin(), zs.end());
+
+	// [문제] zs를 거꾸로 출력하라.
+	//for( const char& c : zs | views::reverse ) {
+	//	cout << c;
+	//}
+
+	//터짐 이건 아직
+	for(auto i = zs.rbegin(); i != zs.rend(); ++i) {
+		cout << *i;
+	}
+	cout << endl;
+
+}
+
+
+
+===============================================
+저장한 시간 -2026-05-26 16:40:21.8233973
+===============================================
+
+//==========================================================================================
+// STL 컨테이너 반복자 - Iterators are a generalization of pointers that allow 
+//                       a C++ program to work with different data structures in a uniform manner 
+//==========================================================================================
+// 반복자를 이용한 c++ 프로그램(uniform manner)
+#include <iostream>
+#include <algorithm>
+#include <ranges>
+#include "save.h"
+#include "ZString.h"
+
+using namespace std;
+
+extern bool 관찰;
+
+template <class 반복자, class 값>
+반복자 my_find(반복자 beg, 반복자 end, 값 val)
+{
+	while (beg != end) {
+		if ((*beg == val) == true) {
+			return beg;
+		}
+		++beg;
+	}
+	return end;
+}
+
+
+int main() 
+{
+	ZString zs("Sphinx of black quartz judge my vow");
+
+	cout << "찾을 글자는?" << endl;
+	char c;
+	cin >> c;
+
+	my_find(zs.begin(), zs.end(), c);
+
+	save("메인.cpp");
+
+}
+
+
+
+===============================================
+저장한 시간 -2026-05-26 17:10:25.5916817
+===============================================
+
+//==========================================================================================
+// STL 컨테이너 반복자 - Iterators are a generalization of pointers that allow 
+//                       a C++ program to work with different data structures in a uniform manner 
+//==========================================================================================
+// 반복자를 이용한 c++ 프로그램(uniform manner)
+#include <iostream>
+#include <algorithm>
+#include <ranges>
+#include "save.h"
+#include "ZString.h"
+
+using namespace std;
+
+extern bool 관찰;
+
+template<class 반복자, class 조건자>
+반복자 my_find_if(반복자 beg, 반복자 end, 조건자 pred )
+{
+	while (beg != end) {
+		if (pred(*beg)) return beg;
+		++beg;
+	}
+	return end;
+}
+
+int main() 
+{
+	ZString zs("Sphinx of black quartz 3 judge my 6 vow");
+
+	// [문제] zs에서 처음 나오는 짝수를 찾아라.
+	// my_find_if를 작성하라
+	auto p = my_find_if(zs.begin(), zs.end(),[](char c){
+			if (isdigit(c)) {
+				return not (c & 1);
+			}
+		});
+
+	if (p != zs.end()) cout << "짝수 발견 - " << p - zs.begin() + 1;
+	else cout << "짝수 없음";
+
+
+
+	save("메인.cpp");
+
+}
+
+
+
+===============================================
+저장한 시간 -2026-05-26 17:18:02.7732363
+===============================================
+
+//==========================================================================================
+// STL 컨테이너 반복자 - Iterators are a generalization of pointers that allow 
+//                       a C++ program to work with different data structures in a uniform manner 
+//==========================================================================================
+// 반복자를 이용한 c++ 프로그램(uniform manner)
+#include <iostream>
+#include <algorithm>
+#include <ranges>
+#include "save.h"
+#include "ZString.h"
+
+using namespace std;
+
+extern bool 관찰;
+
+
+int main() 
+{
+	ZString zs("Sphinx of black quartz 3 judge my 6 vow");
+
+	//copy(zs.begin(), zs.end(), ostream_iterator<ZString::value_type>{cout, " ### "});
+	copy(zs.begin(), zs.end(), zs.begin() + 5);
+
+	cout << zs << endl;
+
+
+	save("메인.cpp");
+
+}
+
+
+
+===============================================
+저장한 시간 -2026-05-26 17:20:34.9231353
+===============================================
+
+//==========================================================================================
+// STL 컨테이너 반복자 - Iterators are a generalization of pointers that allow 
+//                       a C++ program to work with different data structures in a uniform manner 
+//==========================================================================================
+// 반복자를 이용한 c++ 프로그램(uniform manner)
+#include <iostream>
+#include <algorithm>
+#include <ranges>
+#include "save.h"
+#include "ZString.h"
+
+using namespace std;
+
+extern bool 관찰;
+
+template<class 반복자, class 출력반복자>
+void my_copy(반복자 b, 반복자 e, 출력반복자  o)
+{
+	while (b != e) {
+		*o = *b;
+		++b;
+		++o;
+	}
+}
+
+
+int main() 
+{
+	ZString zs("Sphinx of black quartz 3 judge my 6 vow");
+
+	// 코드 설명은 다음주에
+	my_copy(zs.begin(), zs.end(), ostream_iterator<ZString::value_type>{cout, " ### "});
+	
+
+
+	save("메인.cpp");
+
+}
+
+
+
+===============================================
+저장한 시간 -2026-06-01 14:00:46.1059356
+===============================================
+
+// 6/22 기말
+// ==========================================================================================
+// STL Associative Container
+// - set.multiset - key-value, key == value
+// - map.multimap - key-value, key값을 정렬기준으로 하여 O(log n) value를 찾는다
+//==========================================================================================
+#include <iostream>
+#include <set>
+#include "save.h"
+#include "ZString.h"
+
+using namespace std;
+
+extern bool 관찰;
+
+int main() 
+{
+	set<int,less<int>> s{2,4,6,1,3,4,6};
+	/*
+	4 < 4(new) -> false
+	4(new) < 4 -> false
+
+	4와 4(new) - equivalent 관계
+	*/
+
+
+	for(int num : s) {
+		cout << num << " ";
+	}
+	cout << endl;
+
+
+	save("메인.cpp");
+
+}
+
+
+
+===============================================
+저장한 시간 -2026-06-01 14:42:41.0034294
+===============================================
+
+// 6/22 기말
+// ==========================================================================================
+// STL Associative Container
+// - set.multiset - key-value, key == value
+// - map.multimap - key-value, key값을 정렬기준으로 하여 O(log n) value를 찾는다
+//==========================================================================================
+#include <iostream>
+#include <set>
+#include <fstream>
+#include "save.h"
+#include "ZString.h"
+
+using namespace std;
+
+extern bool 관찰;
+
+int main() 
+{
+	// "메인.cpp"의 단어를 set<ZString>에 저장하라
+	
+	ifstream in("메인.cpp");
+	if (!in) {
+		cout << "실패" << endl;
+		return 20260601;
+	}
+
+	// set<ZString>에 in의 단어를 저장하라.
+	// 정렬순서는 ZString의 id 기준 오름차순이다.
+
+	class Dog {
+	public:
+		bool operator()(const ZString& a, const ZString& b) const {
+			return a.getId() > b.getId();
+		}
+	};
+
+	set<ZString, Dog> s{ istream_iterator<ZString>{in},{} };
+	
+	관찰 = true;
+	for (const ZString& zs : s) {
+		zs.show();
+	}
+	관찰 = false;
+
+	save("메인.cpp");
+
+}
+
+
+
+===============================================
+저장한 시간 -2026-06-01 14:55:28.5307239
+===============================================
+
+// 6/22 기말
+// ==========================================================================================
+// STL Associative Container
+// - set.multiset - key-value, key == value
+// - map.multimap - key-value, key값을 정렬기준으로 하여 O(log n) value를 찾는다
+//==========================================================================================
+#include <iostream>
+#include <set>
+#include <fstream>
+#include <algorithm>
+#include "save.h"
+#include "ZString.h"
+
+using namespace std;
+
+extern bool 관찰;
+
+int main() 
+{
+	// "이상한 나라의 앨리스.txt"의 단어를 set<ZString>에 저장하라
+	
+	ifstream in("이상한 나라의 앨리스.txt");
+	if (!in) {
+		cout << "실패" << endl;
+		return 20260601;
+	}
+
+	set<ZString> s{ istream_iterator<ZString>{in},{} };
+	
+	for (const ZString& zs : s) {
+		cout << zs << " ";
+	}
+	cout << endl;
+
+	cout << "단어개수 - " << s.size() << endl;
+
+	save("메인.cpp");
+
+	// [문제] 단어를 입력받아
+	// 있다면 몇 번째 단어인지
+	// 없다면 없는 단어라고 출력해 주자
+
+	while (true) {
+		cout << "찾을 단어: ";
+		ZString word;
+		cin >> word;
+
+		auto p = s.find(word);
+		if(p!= s.end())
+			cout << "단어가 있습니다. " << distance(s.begin(), p) + 1 << " 번째 단어입니다." << endl;
+		else
+			cout << "단어가 없습니다." << endl;
+		
+
+	}
+
+
+}
+
+
+
+===============================================
+저장한 시간 -2026-06-01 14:56:36.1288231
+===============================================
+
+// 6/22 기말
+// ==========================================================================================
+// STL Associative Container
+// - set.multiset - key-value, key == value
+// - map.multimap - key-value, key값을 정렬기준으로 하여 O(log n) value를 찾는다
+//==========================================================================================
+#include <iostream>
+#include <set>
+#include <fstream>
+#include <algorithm>
+#include "save.h"
+#include "ZString.h"
+
+using namespace std;
+
+extern bool 관찰;
+
+int main() 
+{
+	// "이상한 나라의 앨리스.txt"의 단어를 set<ZString>에 저장하라
+	
+	ifstream in("이상한 나라의 앨리스.txt");
+	if (!in) {
+		cout << "실패" << endl;
+		return 20260601;
+	}
+
+	set<ZString> s{ istream_iterator<ZString>{in},{} };
+	
+	for (const ZString& zs : s) {
+		cout << zs << " ";
+	}
+	cout << endl;
+
+	cout << "단어개수 - " << s.size() << endl;
+
+	save("메인.cpp");
+
+	// [문제] 단어를 입력받아 있는지 없는지 출력하라
+
+	while (true) {
+		cout << "찾을 단어: ";
+		ZString word;
+		cin >> word;
+
+		if( s.contains(word) )
+			cout << "있음" << endl;
+		else
+			cout << "없음" << endl;
+
+	}
+
+
+}
+
+
+
+===============================================
+저장한 시간 -2026-06-01 15:18:10.4929303
+===============================================
+
+// 6/22 기말
+// ==========================================================================================
+// STL Associative Container
+// - set.multiset - key-value, key == value
+// - map.multimap - key-value, key값을 정렬기준으로 하여 O(log n) value를 찾는다
+//==========================================================================================
+#include <iostream>
+#include <set>
+#include <fstream>
+#include <algorithm>
+#include <vector>
+#include "save.h"
+#include "ZString.h"
+
+using namespace std;
+
+extern bool 관찰;
+
+int main() 
+{
+	// "이상한 나라의 앨리스.txt"의 단어를 set<ZString>에 저장하라
+	
+	ifstream in("이상한 나라의 앨리스.txt");
+	if (!in) {
+		cout << "실패" << endl;
+		return 20260601;
+	}
+
+	set<ZString> s{ istream_iterator<ZString>{in},{} };
+	
+	for (const ZString& zs : s) {
+		cout << zs << " ";
+	}
+	cout << endl;
+
+	cout << "단어개수 - " << s.size() << endl;
+
+	save("메인.cpp");
+
+	// vector에 정렬된 데이터를 복사하였다.
+	// [문제] 단어를 입력받아 있는지 없는지 출력하라
+	vector<ZString> v;
+	v.reserve(s.size());
+	v.assign(s.begin(), s.end());
+
+	while (true) {
+		cout << "찾을 단어: ";
+		ZString word;
+		cin >> word;
+
+		if (binary_search(v.begin(), v.end(), word))
+			cout << "있음" << endl;
+		else
+			cout << "없음" << endl;
+	}
+
+
+}
+
+
+
+===============================================
+저장한 시간 -2026-06-01 15:21:55.8118407
+===============================================
+
+// 6/22 기말
+// ==========================================================================================
+// STL Associative Container
+// - set.multiset - key-value, key == value
+// - map.multimap - key-value, key값을 정렬기준으로 하여 O(log n) value를 찾는다
+//==========================================================================================
+#include <iostream>
+#include <set>
+#include <fstream>
+#include <algorithm>
+#include <vector>
+#include "save.h"
+#include "ZString.h"
+
+using namespace std;
+
+extern bool 관찰;
+
+int main() 
+{
+	// "이상한 나라의 앨리스.txt"의 단어를 set<ZString>에 저장하라
+	
+	ifstream in("이상한 나라의 앨리스.txt");
+	if (!in) {
+		cout << "실패" << endl;
+		return 20260601;
+	}
+
+	multiset<ZString> s{ istream_iterator<ZString>{in},{} };
+	
+	for (const ZString& zs : s) {
+		cout << zs << " ";
+	}
+	cout << endl;
+
+	cout << "단어개수 - " << s.size() << endl;
+
+	save("메인.cpp");
+
+	// [문제] 단어를 입력받아 있따면 몇 개인지
+	// 없다면 없다고 출력하라.
+
+	while (true) {
+		cout << "찾을 단어: ";
+		ZString word;
+		cin >> word;
+
+		auto [하한, 상한] = s.equal_range(word);
+		// pair로도 받아 코딩해 보세요
+		// pair<iterator, iterator> equal_range(const key_type& key) const;
+		if (상한 == 하한)
+			cout << "없는 단어" << endl;
+		else
+			cout << distance(하한, 상한) << "개가 있습니다." << endl;
+	}
+
+
+}
+
+
+
+===============================================
+저장한 시간 -2026-06-02 15:54:35.7888801
+===============================================
+
+// 6/22 기말
+// ==========================================================================================
+// STL Associative Container
+// - set.multiset - key-value, key == value
+// - map.multimap - key-value, key값을 정렬기준으로 하여 O(log n) value를 찾는다
+//==========================================================================================
+#include <iostream>
+#include <set>
+#include <fstream>
+#include <algorithm>
+#include <vector>
+#include "save.h"
+#include "ZString.h"
+
+using namespace std;
+
+extern bool 관찰;
+
+template<class 원본, class 복사본>
+void my_copy(원본 beg, 원본 end, 복사본 out)
+{
+	while (beg != end) {
+		*out++ = *beg++;
+	}
+}
+
+int main() 
+{
+	vector<int> s{ 1, 2, 3, 4, 5, 1, 1, 1, 1, 1 };
+	vector<int> v;
+
+	my_copy(s.begin(), s.end(), back_inserter(v));
+
+	for( int num : v) {
+		cout << num << " ";
+	}
+	cout << endl;
+
+	save("메인.cpp");
+
+}
+
+
+
+===============================================
+저장한 시간 -2026-06-02 16:40:36.7265141
+===============================================
+
+// 6/22 기말
+// ==========================================================================================
+// STL Associative Container
+// - set.multiset - key-value, key == value
+// - map.multimap - key-value, key값을 정렬기준으로 하여 O(log n) value를 찾는다
+//==========================================================================================
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <map>
+#include <set>
+#include "save.h"
+#include "ZString.h"
+
+using namespace std;
+
+extern bool 관찰;
+
+int main()
+{
+	ifstream in{"이상한 나라의 앨리스.txt"};
+	if (!in) {
+		cout << "파일을 열 수 없습니다." << endl;
+		exit(20260602);
+	}
+
+	vector<ZString> v{ istream_iterator<ZString>{in}, {} };
+
+	//copy(istream_iterator<ZString>{in}, {}, back_inserter(v));	// 되긴 하는데 비효율
+
+	// [문제] 어떤 단어가 가장 많이 사용되었는지 알고 싶다.
+	// 많이 사용된 단어부터 단어와 개수를 화면에 출력하라.
+	// ex) the - 1323
+
+	map<ZString, size_t> 단어와개수;
+
+	for (const ZString& zs : v) {
+		++단어와개수[zs];
+	}
+
+	//for (const auto& [단어, 개수] : 단어와개수) {
+	//	cout << 단어 << " - " << 개수 << endl;
+	//}
+
+	cout << "개별 단어의 개수 - " << 단어와개수.size() << endl;
+
+	multimap<size_t, ZString, greater<size_t>> 개수와단어;
+
+	for (const auto& [단어, 개수] : 단어와개수) {
+		개수와단어.insert(make_pair(개수, 단어));
+		//개수와단어.emplace(개수, 단어);
+	}
+
+	for(const auto& [개수, 단어] : 개수와단어) {
+		cout << 단어 << "\t - " << 개수 << endl;
+	}
+
+	save("메인.cpp");
+
+}
+
+
+
+===============================================
+저장한 시간 -2026-06-02 16:46:53.8243265
+===============================================
+
+// 6/22 기말
+// ==========================================================================================
+// STL Associative Container
+// - set.multiset - key-value, key == value
+// - map.multimap - key-value, key값을 정렬기준으로 하여 O(log n) value를 찾는다
+//==========================================================================================
+#include <iostream>
+#include <set>
+#include "save.h"
+#include "ZString.h"
+
+using namespace std;
+
+extern bool 관찰;
+
+int main()
+{	
+	// [문제] 입력한 단어를 정렬한 후 출력하라.
+	set<ZString> s{ istream_iterator<ZString>{cin},{}};
+
+	copy(s.begin(), s.end(), ostream_iterator<ZString>{cout, "\n"});
+
+	save("메인.cpp");
+
+}
+
+
+
+===============================================
+저장한 시간 -2026-06-02 17:05:39.7888059
+===============================================
+
+// 6/22 기말
+// ==========================================================================================
+// STL Associative Container
+// - set.multiset - key-value, key == value
+// - map.multimap - key-value, key값을 정렬기준으로 하여 O(log n) value를 찾는다
+//==========================================================================================
+#include <iostream>
+#include <vector>
+#include <map>
+#include "save.h"
+#include "ZString.h"
+
+using namespace std;
+
+extern bool 관찰;
+
+int main()
+{	
+	// map - 어디에 쓰면 좋아
+	// 게임회사와 히트작을 관리
+	map<ZString, vector<ZString>> 회사와작품;
+
+	//회사와작품.insert(pair<ZString, vector<ZString>>("펄어비스", { "검은 사막", "붉은 사막" }));
+	회사와작품["펄어비스"] = { "검은 사막", "붉은 사막" };
+	회사와작품["펄어비스"].push_back("레인보우 사막");
+
+	for (const auto& [회사, 작품] : 회사와작품) {
+		cout << 회사;
+		for(const auto& 작품명 : 작품)
+			cout << " - " << 작품명;
+		cout << endl;
+	}
+
+	save("메인.cpp");
+
+}
+
+
+
+===============================================
+저장한 시간 -2026-06-02 17:19:27.8755654
+===============================================
+
+// 6/22 기말
+// ==========================================================================================
+// STL Associative Container
+// - set.multiset - key-value, key == value
+// - map.multimap - key-value, key값을 정렬기준으로 하여 O(log n) value를 찾는다
+//==========================================================================================
+#include <iostream>
+#include <random>
+#include <map>
+#include <print>
+#include "save.h"
+#include "ZString.h"
+
+using namespace std;
+
+extern bool 관찰;
+
+default_random_engine dre;
+uniform_int_distribution<int> uid(1, 10000);
+normal_distribution nd{ 0.0, 0.05};
+
+int main()
+{	
+	// map - 어디에 쓰면 좋아
+	// 유니폼 분포는 유니폼한가?
+	// 노멀 분포의 사용법
+
+	//map<size_t, size_t> 유니폼;
+	//
+	//for(int i = 0 ; i < 1'0000'0000; ++i) {
+	//	int num = uid(dre);
+	//	++유니폼[num / 200];
+	//}
+	//
+	//for (auto [구간, 개수] : 유니폼) {
+	//	println("[{:2}] - {}",구간, 개수);
+	//}
+	
+	map<size_t, size_t> 노멀;
+
+	for (int i = 0; i < 1'0000'0000; ++i) {
+		double num = nd(dre);
+		num = num * 5000 + 5000;
+		if (num < 0)
+			num = 0;
+		if (10000 < num)
+			num = 10000;
+
+
+		++노멀[static_cast<int>(num) / 200];
+	}
+
+	for (auto [구간, 개수] : 노멀) {
+		println("[{:2}] - {}", 구간, 개수);
+	}
+
+	save("메인.cpp");
+
+}
+
+
+
+===============================================
+저장한 시간 -2026-06-08 14:04:24.0379775
+===============================================
+
+// 6/22 기말
+// ==========================================================================================
+// STL Unordered Associative Container - O(1)
+// - unordered_set / unordered_multiset
+// - unordered_map / unordered_multimap
+//==========================================================================================
+#include <iostream>
+#include <unordered_set>
+#include <set>
+#include <print>
+#include "save.h"
+#include "ZString.h"
+
+using namespace std;
+
+extern bool 관찰;
+
+int main()
+{	
+	save("메인.cpp");
+	// 1,2,3,4 -> 4,7,6,1
+
+	// unordered_set의 메모리 구조
+
+	unordered_multiset<int> ums;
+	
+	for( int i = 0 ; i < 511; ++i)
+		ums.insert(i);
+
+
+	while (true)
+	{
+		cout << "추가할 int?";
+		int num;
+		cin >> num;
+		cout << endl;
+		ums.insert(num);
+
+		for (int i = 0; i < ums.bucket_count(); ++i) {
+			print("[{: > 3}]", i);
+			for(auto j = ums.begin(i); j != ums.end(i); ++j) {
+					cout << " - " << *j;
+			}
+			cout << endl;
+		}
+	}
+}
+
+
+
+===============================================
+저장한 시간 -2026-06-08 14:24:14.3023530
+===============================================
+
+// 6/22 기말
+// ==========================================================================================
+// STL Unordered Associative Container - O(1)
+// - unordered_set / unordered_multiset
+// - unordered_map / unordered_multimap
+//==========================================================================================
+#include <iostream>
+#include <unordered_set>
+#include <set>
+#include <print>
+#include <numeric>
+#include <fstream>
+#include "save.h"
+#include "ZString.h"
+
+using namespace std;
+
+extern bool 관찰;
+
+template<>
+struct hash<ZString> {
+	size_t operator()(const ZString& zs) const {
+		return hash<string>{}({ zs.begin(),zs.end() });
+	}
+};
+
+int main()
+{	
+	save("메인.cpp");
+	
+
+	unordered_multiset<ZString> ums{ "2026년", "6월", "8일", "월요일"};
+
+	for (int i = 0; i < ums.bucket_count(); ++i) {
+		print("[{: > 3}]", i);
+		for(auto j = ums.begin(i); j != ums.end(i); ++j) {
+				cout << " - " << *j;
+		}
+		cout << endl;
+	}
+}
+
+
+
+===============================================
+저장한 시간 -2026-06-08 14:24:28.2736702
+===============================================
+
+// 6/22 기말
+// ==========================================================================================
+// STL Unordered Associative Container - O(1)
+// - unordered_set / unordered_multiset
+// - unordered_map / unordered_multimap
+//==========================================================================================
+#include <iostream>
+#include <unordered_set>
+#include <set>
+#include <print>
+#include <numeric>
+#include <fstream>
+#include "save.h"
+#include "ZString.h"
+
+using namespace std;
+
+extern bool 관찰;
+
+template<>
+struct hash<ZString> {
+	size_t operator()(const ZString& zs) const {
+		return hash<string>{}({ zs.begin(),zs.end() });
+	}
+};
+
+int main()
+{	
+	save("메인.cpp");
+	
+
+	ifstream in{ "메인.cpp" };
+	if (!in) {
+		return 1;
+	}
+
+	unordered_multiset<ZString> ums{ istream_iterator<ZString>{in},{} };
+
+	for (int i = 0; i < ums.bucket_count(); ++i) {
+		print("[{: > 3}]", i);
+		for(auto j = ums.begin(i); j != ums.end(i); ++j) {
+				cout << " - " << *j;
+		}
+		cout << endl;
+	}
+}
+
+
+
+===============================================
+저장한 시간 -2026-06-08 15:11:09.1669645
+===============================================
+
+// 6/22 기말
+// ==========================================================================================
+// 컨테이너 찾기 성능 비교
+// 1. vector
+// 2. multiset
+// 3. unordered_multiset
+// 
+// 1000만개에서 10만개 찾기
+//==========================================================================================
+#include <iostream>
+#include <unordered_set>
+#include <set>
+#include <vector>
+#include <array>
+#include <random>
+#include <algorithm>
+#include <chrono>
+#include "save.h"
+#include "ZString.h"
+
+using namespace std;
+
+extern bool 관찰;
+
+const size_t NUM{ 1000'0000 };
+const size_t FNUM{ 1'0000 };
+
+array<int, NUM> num;
+array<int, FNUM> fnum;
+
+default_random_engine dre;
+uniform_int_distribution uid{ 1,2000'0000 };
+
+int main()
+{
+	save("메인.cpp");
+
+	for (int& num : num)
+		num = uid(dre);
+
+	for (int& num : fnum)
+		num = uid(dre);
+
+	{	// 벡터에서 찾기
+		vector<int> v{ num.begin(), num.end() };
+
+		cout << "벡터에서 찾는 중";
+		size_t cnt{};
+
+		auto start = chrono::high_resolution_clock::now();
+		for (int num : fnum) {
+			if (find(v.begin(), v.end(), num) != v.end())
+				++cnt;
+		}
+		auto end = chrono::high_resolution_clock::now();
+		auto dur = chrono::duration_cast<chrono::milliseconds>(end - start);
+
+		cout << endl;
+		cout << FNUM << "중에서" << cnt << "개 찾음" << endl;
+		cout << "걸린 시간: " << dur << endl;
+	}
+
+	cout << endl;
+
+	{	// 정렬된 벡터에서 찾기
+		vector<int> v{ num.begin(), num.end() };
+
+		cout << "벡터 정렬하는 중";
+		sort(v.begin(), v.end());
+		cout << endl;
+
+		cout << "정렬된 벡터에서 찾는 중";
+		size_t cnt{};
+
+		auto start = chrono::high_resolution_clock::now();
+		for (int num : fnum) {
+			if (binary_search(v.begin(),v.end(),num))
+				++cnt;
+		}
+		auto end = chrono::high_resolution_clock::now();
+		auto dur = chrono::duration_cast<chrono::milliseconds>(end - start);
+
+		cout << endl;
+		cout << FNUM << "중에서" << cnt << "개 찾음" << endl;
+		cout << "걸린 시간: " << dur << endl;
+	}
+
+	cout << endl;
+
+	{	// 셋에서 찾기
+		multiset<int> s{ num.begin(), num.end() };
+
+		cout << "set에서 찾는 중";
+		size_t cnt{};
+
+		auto start = chrono::high_resolution_clock::now();
+		for (int num : fnum) {
+			if (s.contains(num))
+				++cnt;
+		}
+		auto end = chrono::high_resolution_clock::now();
+		auto dur = chrono::duration_cast<chrono::milliseconds>(end - start);
+
+		cout << endl;
+		cout << FNUM << "중에서" << cnt << "개 찾음" << endl;
+		cout << "걸린 시간: " << dur << endl;
+	}
+
+	cout << endl;
+
+	{	// 언오더드 셋에서 찾기
+		unordered_multiset<int> us{ num.begin(), num.end() };
+
+		cout << "unordered_set에서 찾는 중";
+		size_t cnt{};
+
+		auto start = chrono::high_resolution_clock::now();
+		for (int num : fnum) {
+			if (us.contains(num))
+				++cnt;
+		}
+		auto end = chrono::high_resolution_clock::now();
+		auto dur = chrono::duration_cast<chrono::milliseconds>(end - start);
+
+		cout << endl;
+		cout << FNUM << "중에서" << cnt << "개 찾음" << endl;
+		cout << "걸린 시간: " << dur << endl;
+	}
+}
+
+
+
+===============================================
+저장한 시간 -2026-06-09 16:48:06.7725905
+===============================================
+
+// 6/22 기말
+// ==========================================================================================
+// STL Algorithms
+// 1. Non-modifying sequence operations 
+// 2. Modifying sequence operations
+// 3. Sorting and related operations
+//==========================================================================================
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <random>
+#include "save.h"
+#include "ZString.h"
+
+using namespace std;
+
+extern bool 관찰;
+
+int main()
+{
+	save("메인.cpp");
+
+	// 이번 주 lotto 번호를 알려주자.
+	vector<int> v;
+	for (int i = 0; i < 45; ++i)
+		v.push_back(i + 1);
+
+	default_random_engine dre{ random_device{}()};
+
+	cout << "이번 주 lotto 번호는? " << endl;
+
+	sample(v.begin(), v.end(), ostream_iterator<int>{cout, " "}, 6, dre);
+
+}
+
+
+
+===============================================
+저장한 시간 -2026-06-09 16:58:49.0672967
+===============================================
+
+// 6/22 기말
+// ==========================================================================================
+// STL Algorithms
+// 1. Non-modifying sequence operations 
+// 2. Modifying sequence operations
+// 3. Sorting and related operations
+//==========================================================================================
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <random>
+#include <thread>
+#include <chrono>
+#include <print>
+#include "save.h"
+#include "ZString.h"
+
+using namespace std;
+
+extern bool 관찰;
+
+int main()
+{
+	save("메인.cpp");
+
+	// 이번 주 lotto 번호를 알려주자.
+	ZString zs{ "the quick brown fox jumps over the lazy dog" };
+	
+	for (int i = 0; i < 10; ++i) {
+		cout << endl;
+	}
+
+	while (true) {
+		print("{:^80}", string{ zs.begin(),zs.end() });
+		this_thread::sleep_for(100ms);
+		cout << '\r';
+		rotate(zs.begin(), zs.begin() + 1, zs.end());
+	}
+
+}
+
+
+
+===============================================
+저장한 시간 -2026-06-09 17:19:50.7473374
+===============================================
+
+// 6/22 기말
+// ==========================================================================================
+// STL Algorithms
+// - 정렬 관련 알고리즘 - 복잡도 순서대로
+//==========================================================================================
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <algorithm>
+#include <random>
+#include "save.h"
+#include "ZString.h"
+
+using namespace std;
+
+extern bool 관찰;
+
+default_random_engine dre{ random_device{}()};
+
+int main()
+{
+	save("메인.cpp");
+
+	ifstream in("이상한 나라의 앨리스.txt");
+	if (!in) {
+		cout << "실패" << endl;
+		return 20260601;
+	}
+
+	vector<ZString> v{ istream_iterator<ZString>{in},{} };
+	cout << "모두" << v.size() << "개의 단어를 읽음" << endl;
+
+	sort(v.begin(), v.end());
+	auto newEnd = unique(v.begin(), v.end());
+	v.erase(newEnd, v.end());
+
+	cout << "중복 제거 후 " << v.size() << "개의 단어가 남음" << endl;
+
+	shuffle(v.begin(), v.end(), dre);
+
+
+	// [문제] 길이가 홀수인 것과 짝수인 것으로 정렬하라.
+	// 앞에는 홀수 뒤에는 짝수
+	// 홀수 앞에 짝수가 있으면 안된다.
+	// 홀수와 짝수가 몇 개인지 출력하시오
+
+	// 이 답은 홀수와 짝수의 개수를 세는 방법이 아니다.
+	// 개수를 세지 않는 문제였어도 정답이 아님
+	// 정렬하라고 문제에 써 있지만 정렬을 하는 것이 아님.
+	//sort(v.begin(),v.end(),[](const ZString& a, const ZString& b) {
+	//	if (a.size() % 2 == 0)
+	//		if (b.size() % 2 == 1)
+	//			return false;
+	//	return true;
+	//});
+
+	// 파티션을 해야함
+	// 파티션을 조건에 맞는것과 맞지 않는 경계를 return함
+	// 현재는 짝수의 시작위치
+	auto p = partition(v.begin(), v.end(), [](const ZString& a) {
+		return a.size() % 2;
+		});
+
+	for (auto i = v.begin(); i != p; ++i) {
+		cout << *i << " ";
+	}
+
+	cout << endl;
+	cout << endl;
+
+	for (auto i = p; i != v.end(); ++i) {
+		cout << *i << " ";
+	}
+
+	cout << "길이가 홀수 - " << distance(v.begin(), p) << endl;
+	cout << "길이가 짝수 - " << distance(p, v.end()) << endl;
+}
+
+
+
+===============================================
+저장한 시간 -2026-06-15 13:51:17.1773014
+===============================================
+
+// 6/22 기말
+// ==========================================================================================
+// STL Algorithms
+// - 정렬 관련 알고리즘 - 복잡도 순서대로
+//==========================================================================================
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <algorithm>
+#include <random>
+#include <ranges>
+#include <numeric>
+#include <print>
+#include "save.h"
+#include "ZString.h"
+
+using namespace std;
+
+extern bool 관찰;
+
+default_random_engine dre;
+
+int main()
+{
+	save("메인.cpp");
+
+	// 1부터 100까지 숫자를 준비한다.
+	vector<int> v(100);
+
+	ranges::iota(v, 1);
+
+	ranges::shuffle(v, dre);
+
+	// [문제] 3의 배수와 아닌 것으로 분리하라.
+	// 3의 배수가 몇 개인지 출력하라.
+
+	//ranges::partition(v, [](int num) {
+	//	return num % 3 == 0;
+	//	});
+	auto p = partition(v.begin(),v.end(), [](int num) {
+		return num % 3 == 0;
+		});
+	cout << "3의 배수 개수: " << p - v.begin() << endl;
+
+	for (auto i = v.begin(); i < p; ++i) {
+		print("{:4}", *i);
+	}
+	cout << endl;
+}
+
+
+
+===============================================
+저장한 시간 -2026-06-15 13:57:15.4526406
+===============================================
+
+// 6/22 기말
+// ==========================================================================================
+// STL Algorithms
+// - 정렬 관련 알고리즘 - 복잡도 순서대로
+//==========================================================================================
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <algorithm>
+#include <random>
+#include <ranges>
+#include <numeric>
+#include <print>
+#include "save.h"
+#include "ZString.h"
+
+using namespace std;
+
+extern bool 관찰;
+
+default_random_engine dre;
+
+int main()
+{
+	save("메인.cpp");
+
+	// 1부터 100까지 숫자를 준비한다.
+	vector<int> v(100);
+
+	ranges::iota(v, 1);
+
+	ranges::shuffle(v, dre);
+
+	// [문제] 앞에서부터 10등까지만 따로 골라내줘.
+	// 이때 1등부터 10등까지 순서는 정렬되어 있지 않아도 돼.	10등까지만 했더니 우연히 정렬된것처럼 나왓음 ㄷㄷ
+
+	nth_element(v.begin(), v.begin() + 20, v.end());
+
+	for(auto i = v.begin(); i < v.begin() + 20; ++i) {
+		print("{:4}", *i);
+	}
+	cout << endl;
+}
+
+
+
+===============================================
+저장한 시간 -2026-06-15 13:59:02.3679444
+===============================================
+
+// 6/22 기말
+// ==========================================================================================
+// STL Algorithms
+// - 정렬 관련 알고리즘 - 복잡도 순서대로
+//==========================================================================================
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <algorithm>
+#include <random>
+#include <ranges>
+#include <numeric>
+#include <print>
+#include "save.h"
+#include "ZString.h"
+
+using namespace std;
+
+extern bool 관찰;
+
+default_random_engine dre;
+
+int main()
+{
+	save("메인.cpp");
+
+	// 1부터 100까지 숫자를 준비한다.
+	vector<int> v(100);
+
+	ranges::iota(v, 1);
+
+	ranges::shuffle(v, dre);
+
+	// [문제] 1등부터 30등까지 정렬.
+
+	partial_sort(v.begin(), v.begin() + 30, v.end());
+
+	for(auto i = v.begin(); i < v.end(); ++i) {
+		print("{:4}", *i);
+	}
+	cout << endl;
+}
+
+
+
+===============================================
+저장한 시간 -2026-06-15 14:17:56.0427064
+===============================================
+
+// 6/22 기말
+// ==========================================================================================
+// range
+// range factory / range adaptor
+// view - light-weight object
+// filter - lazy evaluation (<=> eager evaluation)
+// 
+// concept
+// type traits
+// 
+// C++20 Constrained Algorithm (Range + Concept)
+//==========================================================================================
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <algorithm>
+#include <random>
+#include <ranges>
+#include <numeric>
+#include <print>
+#include <list>
+#include "save.h"
+#include "ZString.h"
+
+using namespace std;
+
+extern bool 관찰;
+
+default_random_engine dre;
+
+int main()
+{
+	save("메인.cpp");
+
+	ifstream in{ "이상한 나라의 앨리스.txt" };
+	if (not in) {
+		return 20260615;
+	}
+
+	vector<ZString> v;
+	v.reserve(30000);
+	v.assign(istream_iterator<ZString>{in}, {});
+
+	// 중복 객체 제거
+	sort(v.begin(), v.end());
+	v.erase(unique(v.begin(), v.end()), v.end());
+
+	// 길이기준 오름차순으로 정렬한다
+	// 기존의 ranges::sort는 stable하지 않으므로 stable_sort를 사용한다.
+	ranges::stable_sort(v, {}, &ZString::size);
+	
+
+	for(const auto & s : v) {
+		cout << s << endl;
+	}
+	cout << endl;
+}
+
+
+
+===============================================
+저장한 시간 -2026-06-15 15:04:52.7156159
+===============================================
+
+// 6/22 기말
+// ==========================================================================================
+// range
+// range factory / range adaptor
+// view - light-weight object
+// filter - lazy evaluation (<=> eager evaluation)
+// 
+// concept
+// type traits
+// 
+// C++20 Constrained Algorithm (Range + Concept)
+//==========================================================================================
+#include <iostream>
+#include <vector>
+#include <ranges>
+#include <print>
+#include "save.h"
+#include "ZString.h"
+
+using namespace std;
+
+extern bool 관찰;
+
+int main()
+{
+	save("메인.cpp");
+	auto 홀수 = [](int num){
+		return num % 2 == 1;
+		};
+
+	auto 소수 = [](int num) {
+		if (num < 2) {
+			return false;
+		}
+		for (int i = 2; i * i <= num; ++i) {
+			if (num % i == 0) {
+				return false;
+			}
+		}
+		return true;
+		};
+
+	for (int num : views::iota(1, 10) | views::filter(홀수) | views::filter(소수) | views::reverse)
+		print("{:8}", num);
+
+}
+
+
+
+===============================================
+저장한 시간 -2026-06-16 15:54:06.9644472
+===============================================
+
+// 6/22 기말
+// ==========================================================================================
+// range
+// range factory / range adaptor
+// view - light-weight object
+// filter - lazy evaluation (<=> eager evaluation)
+// univeral reference - range for 에서 rnage factory를 이용할 때 사용
+// 
+// concept
+// type traits
+// 
+// C++20 Constrained Algorithm (Range + Concept)
+//==========================================================================================
+#include <iostream>
+#include <vector>
+#include <ranges>
+#include <print>
+#include "save.h"
+#include "ZString.h"
+
+using namespace std;
+
+extern bool 관찰;
+
+template<class T>
+concept 숫자만 = is_integral_v<T> || is_floating_point_v<T>;
+
+template<숫자만 T>
+T add(const T& a, const T& b) 
+{
+	return a + b;
+}
+
+class Dog {
+public:
+	Dog() = default;
+	Dog(int n) : n{ n } {};
+
+	Dog operator+(const Dog& rhs) const {
+		return Dog{ n + rhs.n };	// RVO
+	}
+private:
+	int n;
+	friend ostream& operator<< (ostream& os, const Dog& d) {
+		return os << d.n;
+	}
+};
+
+
+int main()
+{
+	save("메인.cpp");
+
+	//[문제] add 함수를 작성하라.
+	cout << add(1, 2) << endl;
+	cout << add(1.2, 2.3) << endl;
+
+	// concept 사용해서 빨간줄 쳐짐
+	//cout << add("2026년"s, "6월 15일"s) << endl;
+
+	// [질문] 내가 만든 calss Dog가 내가 만든 concept 숫자만을 만족하도록 하고 싶다.
+	//cout << add(Dog{ 1 }, Dog{ 2 }) << endl;
+
+}
+
